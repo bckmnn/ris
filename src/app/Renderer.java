@@ -10,6 +10,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.PixelFormat;
 
 import akka.actor.UntypedActor;
 import app.messages.Message;
@@ -23,6 +24,8 @@ public class Renderer extends UntypedActor {
     private static final int width = 640;
     private static final int height = 480;
 
+    private boolean multisampling = true;
+
     private Shader shader;
     private Node start;
     private Camera camera;
@@ -30,7 +33,9 @@ public class Renderer extends UntypedActor {
     private void initialize() {
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
-            Display.create();
+            
+            if (multisampling) Display.create(new PixelFormat().withSamples(8));
+            else Display.create();
 
             // Limit to 60 FPS
             Display.setSwapInterval(1);
@@ -47,7 +52,7 @@ public class Renderer extends UntypedActor {
 
         // Create shader and cube.
         shader = new Shader();
-        
+
         getSender().tell(shader, self());
         getSender().tell(Message.RENDERER_INITIALIZED, self());
         getSender().tell(Message.INITIALIZED, self());
@@ -70,13 +75,13 @@ public class Renderer extends UntypedActor {
         // The perspective projection. Camera space to NDC.
         Matrix projectionMatrix = vecmath.perspectiveMatrix(60f, aspect, 0.1f, 100f);
         Shader.setProjectionMatrix(projectionMatrix);
-        
+
         camera.activate();
         start.display();
 
         Display.setTitle("App");
         Display.update();
-        
+
         getSender().tell(Message.DONE, self());
     }
 
