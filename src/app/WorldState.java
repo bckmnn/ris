@@ -36,12 +36,13 @@ public class WorldState extends UntypedActor {
         simulator.tell(new UpdateNodesMessage(updateNodes), self());
     }
 
-    private void loop() {
-        renderer.tell(Message.LOOP, self());
+    private void compute() {
         simulator.tell(Message.LOOP, self());
         input.tell(Message.LOOP, self());
-        System.out.println("Took " + time.elapsed() + "s");
-        System.out.println("Relooping with " + time.fps + " fps");
+    }
+
+    public void display() {
+        renderer.tell(Message.LOOP, self());
     }
 
     @Override
@@ -51,19 +52,22 @@ public class WorldState extends UntypedActor {
 
             unitState.put(getSender(), true);
             if (!unitState.containsValue(false)) {
-                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet())
+                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
                     entry.setValue(false);
-                loop();
+                }
+                display(); // TODO Display current state! pass immutable world state to renderer
+                compute();
             }
         } else if (message == Message.INITIALIZED) {
-            System.out.println("INITIALIZED " + System.currentTimeMillis() + " " + getSender());
             unitState.put(getSender(), true);
 
             if (!unitState.containsValue(false)) {
-                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet())
+                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
                     entry.setValue(false);
+                }
+                unitState.remove(renderer);
                 initialize();
-                loop();
+                compute();
             }
         } else if (message == Message.INIT) {
             System.out.println("Starting initialization");
