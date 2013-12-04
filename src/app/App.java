@@ -1,27 +1,32 @@
 package app;
 
-import ogl.nodes.camera.Camera;
-import ogl.nodes.shapes.Cube;
-import ogl.vecmathimp.FactoryDefault;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import app.messages.Message;
+import app.nodes.camera.Camera;
+import app.nodes.shapes.Cube;
+import app.vecmathimp.FactoryDefault;
 
 public class App extends WorldState {
-    
-    private Cube cube;
 
+    /**
+     * 1. Create and camera
+     * 2. Create nodes
+     * 3. Add your cam and nodes to 'updateNodes'
+     * 4. Assign a starting node
+     * 5. Launch super.initialize();
+     * 6. ???
+     * 7. Profit!
+     */
     @Override
     protected void initialize() {
-        System.out.println("Initializing custom stuff...");
         camera = new Camera();
-        updateNodes.add(camera);
-        cube = new Cube(shader);
-        updateNodes.add(cube);
-        
         camera.setLocalTransform(FactoryDefault.vecmath.translationMatrix(0, 0, 3));
-        camera.activate();
+        updateNodes.add(camera);
+        
+        Cube cube = new Cube(shader);
+        updateNodes.add(cube);
         
         startNode = cube;
         

@@ -1,4 +1,4 @@
-package ogl.shader;
+package app.shader;
 
 import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glBindAttribLocation;
@@ -8,12 +8,13 @@ import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
-import ogl.app.MatrixUniform;
-import ogl.app.Util;
-import ogl.vecmath.Matrix;
-import ogl.vecmathimp.FactoryDefault;
 
 import org.lwjgl.opengl.GL20;
+
+import app.toolkit.MatrixUniform;
+import app.toolkit.Util;
+import app.vecmath.Matrix;
+import app.vecmathimp.FactoryDefault;
 
 public class Shader {
 	private static Matrix viewMatrix = FactoryDefault.vecmath.identityMatrix();

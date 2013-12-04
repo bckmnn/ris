@@ -1,14 +1,10 @@
 package app;
 
-import static ogl.vecmathimp.FactoryDefault.vecmath;
+import static app.vecmathimp.FactoryDefault.vecmath;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
-import ogl.nodes.Node;
-import ogl.nodes.camera.Camera;
-import ogl.shader.Shader;
-import ogl.vecmath.Matrix;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -18,6 +14,10 @@ import org.lwjgl.opengl.GL11;
 import akka.actor.UntypedActor;
 import app.messages.Message;
 import app.messages.SceneMessage;
+import app.nodes.Node;
+import app.nodes.camera.Camera;
+import app.shader.Shader;
+import app.vecmath.Matrix;
 
 public class Renderer extends UntypedActor {
     private static final int width = 640;

@@ -2,7 +2,7 @@ package app.messages;
 
 import java.util.Set;
 
-import ogl.nodes.Node;
+import app.nodes.Node;
 
 public class UpdateNodesMessage {
     public Set<Node> updateNodes;

@@ -1,19 +1,19 @@
-package ogl.nodes.shapes;
+package app.nodes.shapes;
 
-import static ogl.vecmathimp.FactoryDefault.vecmath;
+import static app.vecmathimp.FactoryDefault.vecmath;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.nio.FloatBuffer;
 
-import ogl.nodes.shapes.Vertex;
-import ogl.shader.Shader;
-import ogl.nodes.Node;
-import ogl.vecmathimp.FactoryDefault;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+
+import app.nodes.Node;
+import app.nodes.shapes.Vertex;
+import app.shader.Shader;
+import app.vecmathimp.FactoryDefault;
 
 public abstract class Shape extends Node{
 	protected Vertex[] vertices;

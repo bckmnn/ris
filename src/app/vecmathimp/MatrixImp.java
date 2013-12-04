@@ -2,19 +2,20 @@
  * Copyright (c) 2013 Henrik Tramberend, Marc Latoschik.
  * All rights reserved.
  *******************************************************************************/
-package ogl.vecmathimp;
+package app.vecmathimp;
 
 import java.nio.FloatBuffer;
-
-import ogl.vecmath.Matrix;
-import ogl.vecmath.Quaternion;
-import ogl.vecmath.Vector;
 
 import org.lwjgl.BufferUtils;
 
 
+
+
+import app.vecmath.Matrix;
+import app.vecmath.Quaternion;
+import app.vecmath.Vector;
 //Select the factory we want to use.
-import static ogl.vecmathimp.FactoryDefault.vecmath;
+import static app.vecmathimp.FactoryDefault.vecmath;
 
 /**
  * A simple 4x4 matrix class using float getValues(). Matrices are non-mutable and

@@ -1,10 +1,9 @@
-package ogl.nodes.shapes;
+package app.nodes.shapes;
 
-import ogl.shader.Shader;
-import ogl.vecmath.Color;
-import ogl.vecmath.Vector;
-
-import static ogl.nodes.shapes.Vertex.*;
+import app.shader.Shader;
+import app.vecmath.Color;
+import app.vecmath.Vector;
+import static app.nodes.shapes.Vertex.*;
 
 public class Cube extends Shape{	
 	public Cube(Shader shader){

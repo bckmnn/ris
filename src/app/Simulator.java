@@ -2,10 +2,10 @@ package app;
 
 import java.util.Set;
 
-import ogl.nodes.Node;
 import akka.actor.UntypedActor;
 import app.messages.Message;
 import app.messages.UpdateNodesMessage;
+import app.nodes.Node;
 
 public class Simulator extends UntypedActor {
     private Set<Node> updateNodes;

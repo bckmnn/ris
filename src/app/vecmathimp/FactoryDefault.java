@@ -2,12 +2,12 @@
  * Copyright (c) 2013 Henrik Tramberend, Marc Latoschik.
  * All rights reserved.
  *******************************************************************************/
-package ogl.vecmathimp;
+package app.vecmathimp;
 
-import ogl.vecmath.Color;
-import ogl.vecmath.Factory;
-import ogl.vecmath.Matrix;
-import ogl.vecmath.Vector;
+import app.vecmath.Color;
+import app.vecmath.Factory;
+import app.vecmath.Matrix;
+import app.vecmath.Vector;
 
 //Our implementation of the Factory interface. For deployment this source 
 //file is exluded from the package and the compiled class file is 

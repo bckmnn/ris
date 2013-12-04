@@ -5,10 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import ogl.app.StopWatch;
-import ogl.nodes.Node;
-import ogl.nodes.camera.Camera;
-import ogl.shader.Shader;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -16,6 +12,10 @@ import akka.actor.UntypedActor;
 import app.messages.Message;
 import app.messages.SceneMessage;
 import app.messages.UpdateNodesMessage;
+import app.nodes.Node;
+import app.nodes.camera.Camera;
+import app.shader.Shader;
+import app.toolkit.StopWatch;
 
 public class WorldState extends UntypedActor {
     public static ActorSystem system;
@@ -50,9 +50,6 @@ public class WorldState extends UntypedActor {
             System.out.println("DONE " + System.currentTimeMillis() + " " + getSender());
 
             unitState.put(getSender(), true);
-
-            System.out.println(unitState);
-
             if (!unitState.containsValue(false)) {
                 for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet())
                     entry.setValue(false);

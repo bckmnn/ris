@@ -1,11 +1,11 @@
-package ogl.vecmathimp;
+package app.vecmathimp;
 
 import java.nio.FloatBuffer;
 
-import ogl.vecmath.Color;
-import ogl.vecmath.Vector;
-
 import org.lwjgl.BufferUtils;
+
+import app.vecmath.Color;
+import app.vecmath.Vector;
 
 
 /**

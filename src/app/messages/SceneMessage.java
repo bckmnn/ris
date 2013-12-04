@@ -1,7 +1,7 @@
 package app.messages;
 
-import ogl.nodes.Node;
-import ogl.nodes.camera.Camera;
+import app.nodes.Node;
+import app.nodes.camera.Camera;
 
 public class SceneMessage {
     public Node start;
