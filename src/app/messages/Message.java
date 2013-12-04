@@ -3,6 +3,7 @@ package app.messages;
 public enum Message {
     INIT,
     DONE,
-    DISPLAY,
-    RENDERER_INITIALIZED
+    LOOP,
+    INITIALIZED,
+    RENDERER_INITIALIZED,
 }

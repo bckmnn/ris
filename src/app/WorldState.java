@@ -1,62 +1,81 @@
 package app;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import ogl.app.StopWatch;
+import ogl.nodes.Node;
+import ogl.nodes.camera.Camera;
+import ogl.shader.Shader;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import app.messages.Message;
+import app.messages.SceneMessage;
+import app.messages.UpdateNodesMessage;
 
 public class WorldState extends UntypedActor {
     public static ActorSystem system;
 
+    private StopWatch time = new StopWatch();
     private Map<ActorRef, Boolean> unitState = new HashMap<ActorRef, Boolean>();
-
     private ActorRef renderer;
     private ActorRef simulator;
     private ActorRef input;
-    
-    long old = System.nanoTime();
-    
-    protected void initialization() {
-        
+
+    protected Node startNode;
+    protected Camera camera;
+    protected Shader shader;
+    protected Set<Node> updateNodes = new HashSet<Node>();
+
+    protected void initialize() {
+        renderer.tell(new SceneMessage(startNode, camera), self());
+        simulator.tell(new UpdateNodesMessage(updateNodes), self());
     }
 
     private void loop() {
-        renderer.tell(Message.DISPLAY, self());
-        simulator.tell(Message.DISPLAY, self());
-        input.tell(Message.DISPLAY, self());
-        long now = System.nanoTime();
-        System.out.println("Took " + ((now - old) / 1000000.0) + "ms");
-        old = now;
-        System.out.println("Relooping");
+        renderer.tell(Message.LOOP, self());
+        simulator.tell(Message.LOOP, self());
+        input.tell(Message.LOOP, self());
+        System.out.println("Took " + time.elapsed() + "s");
+        System.out.println("Relooping with " + time.fps + " fps");
     }
 
     @Override
     public void onReceive(Object message) throws Exception {
         if (message == Message.DONE) {
             System.out.println("DONE " + System.currentTimeMillis() + " " + getSender());
-            
-            
+
             unitState.put(getSender(), true);
-            
+
             System.out.println(unitState);
 
-            
             if (!unitState.containsValue(false)) {
                 for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet())
                     entry.setValue(false);
                 loop();
             }
+        } else if (message == Message.INITIALIZED) {
+            System.out.println("INITIALIZED " + System.currentTimeMillis() + " " + getSender());
+            unitState.put(getSender(), true);
+
+            if (!unitState.containsValue(false)) {
+                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet())
+                    entry.setValue(false);
+                initialize();
+                loop();
+            }
         } else if (message == Message.INIT) {
-            initialization();
-            
+            System.out.println("Starting initialization");
+            time.elapsed();
+
             renderer = getContext().actorOf(Props.create(Renderer.class).withDispatcher("akka.actor.fixed-thread-dispatcher"), "Renderer");
             unitState.put(renderer, false);
             renderer.tell(Message.INIT, self());
-            
+
             simulator = getContext().actorOf(Props.create(Simulator.class), "Simulator");
             unitState.put(simulator, false);
             simulator.tell(Message.INIT, self());
@@ -64,11 +83,8 @@ public class WorldState extends UntypedActor {
             input = getContext().actorOf(Props.create(Input.class), "Input");
             unitState.put(input, false);
             input.tell(Message.INIT, self());
+        } else if (message instanceof Shader) {
+            shader = (Shader) message;
         }
-    }
-
-    public static void main(String[] args) {
-        system = ActorSystem.create();
-        system.actorOf(Props.create(WorldState.class), "WorldState").tell(Message.INIT, ActorRef.noSender());
     }
 }

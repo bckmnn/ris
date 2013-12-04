@@ -5,8 +5,11 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
+import ogl.nodes.Node;
+import ogl.nodes.camera.Camera;
 import ogl.shader.Shader;
 import ogl.vecmath.Matrix;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -14,12 +17,15 @@ import org.lwjgl.opengl.GL11;
 
 import akka.actor.UntypedActor;
 import app.messages.Message;
+import app.messages.SceneMessage;
 
 public class Renderer extends UntypedActor {
     private static final int width = 640;
     private static final int height = 480;
 
     private Shader shader;
+    private Node start;
+    private Camera camera;
 
     private void initialize() {
         try {
@@ -42,8 +48,9 @@ public class Renderer extends UntypedActor {
         // Create shader and cube.
         shader = new Shader();
         
+        getSender().tell(shader, self());
         getSender().tell(Message.RENDERER_INITIALIZED, self());
-        getSender().tell(Message.DONE, self());
+        getSender().tell(Message.INITIALIZED, self());
     }
 
     private void display() {
@@ -63,6 +70,9 @@ public class Renderer extends UntypedActor {
         // The perspective projection. Camera space to NDC.
         Matrix projectionMatrix = vecmath.perspectiveMatrix(60f, aspect, 0.1f, 100f);
         Shader.setProjectionMatrix(projectionMatrix);
+        
+        camera.activate();
+        start.display();
 
         Display.setTitle("App");
         Display.update();
@@ -72,8 +82,11 @@ public class Renderer extends UntypedActor {
 
     @Override
     public void onReceive(Object message) throws Exception {
-        if (message == Message.DISPLAY) {
+        if (message == Message.LOOP) {
             display();
+        } else if (message instanceof SceneMessage) {
+            start = ((SceneMessage) message).start;
+            camera = ((SceneMessage) message).cam;
         } else if (message == Message.INIT) {
             initialize();
         }

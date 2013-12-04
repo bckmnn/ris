@@ -5,22 +5,20 @@ import app.messages.Message;
 
 public class Input extends UntypedActor {
 
-private void initialize() {
-        
-        
+    private void initialize() {
+
+        getSender().tell(Message.INITIALIZED, self());
+    }
+
+    private void run() {
+
         getSender().tell(Message.DONE, self());
     }
 
-    private void display() {
-
-        
-        getSender().tell(Message.DONE, self());
-    }
-    
     @Override
     public void onReceive(Object message) throws Exception {
-        if (message == Message.DISPLAY) {
-            display();
+        if (message == Message.LOOP) {
+            run();
         } else if (message == Message.INIT) {
             initialize();
         }
