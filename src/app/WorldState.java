@@ -10,8 +10,6 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import app.messages.Message;
-import app.messages.SceneMessage;
-import app.messages.UpdateNodesMessage;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.shader.Shader;
@@ -31,47 +29,48 @@ public class WorldState extends UntypedActor {
     protected Shader shader;
     protected Set<Node> updateNodes = new HashSet<Node>();
 
-    protected void initialize() {
-        renderer.tell(new SceneMessage(startNode, camera), self());
-        simulator.tell(new UpdateNodesMessage(updateNodes), self());
-    }
+    private void loop() {
 
-    private void compute() {
+        System.out.println("\nStarting new loop");
+
         simulator.tell(Message.LOOP, self());
         input.tell(Message.LOOP, self());
-    }
-
-    public void display() {
-        renderer.tell(Message.LOOP, self());
+        renderer.tell(Message.DISPLAY, self());
     }
 
     @Override
     public void onReceive(Object message) throws Exception {
         if (message == Message.DONE) {
-            System.out.println("DONE " + System.currentTimeMillis() + " " + getSender());
-
             unitState.put(getSender(), true);
+
+            System.out.println(time.elapsed() + " " + unitState);
+
             if (!unitState.containsValue(false)) {
                 for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
                     entry.setValue(false);
                 }
-                display(); // TODO Display current state! pass immutable world state to renderer
-                compute();
+                loop();
             }
         } else if (message == Message.INITIALIZED) {
+            
+            System.out.println("Initialized " + getSender());
+            
             unitState.put(getSender(), true);
 
             if (!unitState.containsValue(false)) {
                 for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
                     entry.setValue(false);
                 }
-                unitState.remove(renderer);
-                initialize();
-                compute();
+                
+                System.out.println("Initialization finished " + time.elapsed());
+                
+                loop();
             }
         } else if (message == Message.INIT) {
             System.out.println("Starting initialization");
             time.elapsed();
+            
+            initialize();
 
             renderer = getContext().actorOf(Props.create(Renderer.class).withDispatcher("akka.actor.fixed-thread-dispatcher"), "Renderer");
             unitState.put(renderer, false);
@@ -84,8 +83,9 @@ public class WorldState extends UntypedActor {
             input = getContext().actorOf(Props.create(Input.class), "Input");
             unitState.put(input, false);
             input.tell(Message.INIT, self());
-        } else if (message instanceof Shader) {
-            shader = (Shader) message;
         }
+    }
+
+    protected void initialize() {
     }
 }

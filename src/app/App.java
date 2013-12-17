@@ -16,34 +16,33 @@ public class App extends WorldState {
     /**
      * 1. Create a camera
      * 2. Create nodes
-     * 3. Add your cam and nodes to 'updateNodes'
-     * 4. Assign a starting node
-     * 5. Launch super.initialize();
-     * 6. ???
-     * 7. Profit!
+     * 3. Assign a starting node
+     * 4. Launch super.initialize();
+     * 5. ???
+     * 6. Profit!
      */
     @Override
     protected void initialize() {
+        
+        System.out.println("Initializing App");
+        
         camera = new Camera();
         camera.setLocalTransform(FactoryDefault.vecmath.translationMatrix(0, 0, 3));
-        updateNodes.add(camera);
+        camera.name = "Cam";
         
         GroupNode head = new GroupNode();
-        updateNodes.add(head);
+        head.name = "Head";
         
         Cube cube = new Cube(shader);
         cube.appendTo(head);
-        updateNodes.add(cube);
+        cube.name = "Cube 1";
         
         Cube c2 = new Cube(shader);
         c2.setLocalTransform(vecmath.translationMatrix(1, 1, 0));
         c2.appendTo(head);
-        updateNodes.add(c2);
-        
+        c2.name = "c2";
         
         startNode = head;
-        
-        super.initialize();
     }
 
     public static void main(String[] args) {

@@ -14,6 +14,7 @@ import org.lwjgl.opengl.PixelFormat;
 
 import akka.actor.UntypedActor;
 import app.messages.Message;
+import app.messages.RendererInitialization;
 import app.messages.SceneMessage;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
@@ -50,10 +51,6 @@ public class Renderer extends UntypedActor {
         // Enable depth testing.
         glEnable(GL11.GL_DEPTH_TEST);
 
-        // Create shader and cube.
-        shader = new Shader();
-
-        getSender().tell(shader, self());
         getSender().tell(Message.RENDERER_INITIALIZED, self());
         getSender().tell(Message.INITIALIZED, self());
     }
@@ -78,20 +75,22 @@ public class Renderer extends UntypedActor {
 
         camera.activate();
         start.display();
+        
+        System.out.println("Displayed");
+        
 
         Display.setTitle("App");
         Display.update();
+        
+        System.out.println("Updated");
 
         getSender().tell(Message.DONE, self());
     }
 
     @Override
     public void onReceive(Object message) throws Exception {
-        if (message == Message.LOOP) {
+        if (message == Message.DISPLAY) {
             display();
-        } else if (message instanceof SceneMessage) {
-            start = ((SceneMessage) message).start;
-            camera = ((SceneMessage) message).cam;
         } else if (message == Message.INIT) {
             initialize();
         }

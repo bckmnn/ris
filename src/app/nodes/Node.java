@@ -2,6 +2,7 @@ package app.nodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +11,10 @@ import app.edges.Edge;
 import app.vecmath.Matrix;
 import app.vecmathimp.FactoryDefault;
 
-public abstract class Node {
+public abstract class Node implements Cloneable {
     private Matrix modelMatrix, worldTrafo;
     protected List<Edge> edges = new ArrayList<Edge>();
+    public String name;
 
     public Matrix getWorldTransform() {
         return worldTrafo;
@@ -80,12 +82,12 @@ public abstract class Node {
     public Edge append(Node n, Map<String, String> data) {
         return new DefaultEdge(this, n, data);
     }
-    
+
     public Map<String, String> getData(Node n) {
         for (Edge e : edges) {
             if (e.getOtherNode(this) == n) return e.getData();
         }
-        
+
         return new HashMap<String, String>();
     }
 

@@ -42,6 +42,9 @@ public abstract class Shape extends Node{
 	}	
 	
 	public void display(){
+	    
+	    System.out.println("Displaying " + name);
+	    
 		shader.activate();
 		
 		shader.setModelMatrix(getWorldTransform());

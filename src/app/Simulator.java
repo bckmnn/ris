@@ -1,28 +1,20 @@
 package app;
 
-import java.util.Set;
 
 import akka.actor.UntypedActor;
 import app.messages.Message;
-import app.messages.UpdateNodesMessage;
 import app.nodes.Node;
 
 public class Simulator extends UntypedActor {
-    private Set<Node> updateNodes;
+    private Node startNode;
     
     private void initialize() {
-        
-        
         getSender().tell(Message.INITIALIZED, self());
     }
 
     private void simulate() {
-
-        if (!updateNodes.isEmpty()) {
-            for (Node n : updateNodes) {
-                n.updateWorldTransform();
-            }
-        }
+        
+        // Nodes updaten
         
         getSender().tell(Message.DONE, self());
     }
@@ -33,8 +25,6 @@ public class Simulator extends UntypedActor {
             simulate();
         } else if (message == Message.INIT) {
             initialize();
-        } else if (message instanceof UpdateNodesMessage) {
-            updateNodes = ((UpdateNodesMessage) message).updateNodes;
         }
     }
 }

@@ -12,7 +12,7 @@ import app.nodes.Node;
  * @author Constantin
  *
  */
-public abstract class Edge {
+public abstract class Edge implements Cloneable {
 	private Node startNode;
 	private Node endNode;
 	private Map<String, String> data = new HashMap<String, String>();
@@ -63,5 +63,16 @@ public abstract class Edge {
 	
 	public Map<String, String> getData() {
 	    return data;
+	}
+	
+	public Edge clone() {
+	    try {
+            return (Edge) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    
+	    return null;
 	}
 }
