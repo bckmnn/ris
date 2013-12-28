@@ -1,103 +1,231 @@
 package app;
 
+import static app.nodes.NodeFactory.nodeFactory;
+
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import app.eventsystem.CameraCreation;
+import app.eventsystem.Events;
+import app.eventsystem.NodeCreation;
+import app.eventsystem.NodeModification;
+import app.eventsystem.StartNodeModification;
+import app.eventsystem.Target;
+import app.eventsystem.Types;
+import app.eventsystem.WorldEvents;
+import app.messages.KeyEvent;
 import app.messages.Message;
 import app.messages.RendererInitialization;
 import app.messages.RendererInitialized;
+import app.nodes.GroupNode;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
+import app.nodes.shapes.Cube;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
+import app.vecmath.Matrix;
 
-public class WorldState extends UntypedActor {
-    public static ActorSystem system;
+/**
+ * Technical base
+ * 
+ * @author Constantin
+ * 
+ */
+public class WorldState extends UntypedActor{
+	public static ActorSystem system;
+	
+	private Map<String, Node> nodes = new HashMap<String, Node>();
 
-    private StopWatch time = new StopWatch();
-    private Map<ActorRef, Boolean> unitState = new HashMap<ActorRef, Boolean>();
-    private ActorRef renderer;
-    private ActorRef simulator;
-    private ActorRef input;
+	private StopWatch time = new StopWatch();
+	private Map<ActorRef, Boolean> unitState = new HashMap<ActorRef, Boolean>();
+	private SetMultimap<Events, ActorRef> observers = HashMultimap.create();
+	private ActorRef renderer;
+	private ActorRef simulator;
+	private ActorRef input;
 
-    protected Node startNode;
-    protected Camera camera;
-    protected Shader shader;
+	protected Node startNode;
+	protected Camera camera;
+	protected Shader shader;
 
-    private void loop() {
+	private void loop() {
 
-        System.out.println("\nStarting new loop");
+		System.out.println("\nStarting new loop");
 
-        simulator.tell(Message.LOOP, self());
-        input.tell(Message.LOOP, self());
-        renderer.tell(Message.DISPLAY, self());
-    }
+		simulator.tell(Message.LOOP, self());
+		input.tell(Message.LOOP, self());
+		renderer.tell(Message.DISPLAY, self());
+	}
 
-    @Override
-    public void onReceive(Object message) throws Exception {
-        if (message == Message.DONE) {
-            unitState.put(getSender(), true);
+	@Override
+	public void onReceive(Object message) throws Exception {
+		if (message == Message.DONE) {
+			unitState.put(getSender(), true);
 
-            System.out.println(time.elapsed() + " " + unitState);
+			System.out.println(time.elapsed() + " " + unitState);
 
-            if (!unitState.containsValue(false)) {
-                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
-                    entry.setValue(false);
-                }
-                loop();
-            }
-        } else if (message == Message.INITIALIZED) {
-            
-            System.out.println("Initialized " + getSender());
-            
-            unitState.put(getSender(), true);
+			if (!unitState.containsValue(false)) {
+				for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
+					entry.setValue(false);
+				}
+				loop();
+			}
+		} else if (message == Message.INITIALIZED) {
 
-            if (!unitState.containsValue(false)) {
-                for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
-                    entry.setValue(false);
-                }
-                
-                System.out.printf("Initialization finished in %.3fs", time.elapsed());
-                
-                loop();
-            }
-        } else if (message == Message.INIT) {
-            System.out.println("Starting initialization");
-            time.elapsed();
-            
-            System.out.println("Creating Entities");
-            
-            renderer = getContext().actorOf(Props.create(Renderer.class).withDispatcher("akka.actor.fixed-thread-dispatcher"), "Renderer");
-            unitState.put(renderer, false);
+			System.out.println("Initialized " + getSender());
 
-            simulator = getContext().actorOf(Props.create(Simulator.class), "Simulator");
-            unitState.put(simulator, false);
-            
-            input = getContext().actorOf(Props.create(Input.class), "Input");
-            unitState.put(input, false);
-            
-            System.out.println("Initializing App");
+			unitState.put(getSender(), true);
 
-            initialize();
-            
-            System.out.println("App initialized");
-            
-            System.out.println("Initializing Entities");
-            
-            renderer.tell(new RendererInitialization(0), self());
-            simulator.tell(Message.INIT, self());
-        } else if (message instanceof RendererInitialized) {
-        	shader = ((RendererInitialized) message).shader;
-            input.tell(Message.INIT, self());
-        }
-    }
+			if (!unitState.containsValue(false)) {
+				for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
+					entry.setValue(false);
+				}
 
-    protected void initialize() {
-    }
+				System.out.printf("Initialization finished in %.3fs",
+						time.elapsed());
+
+				loop();
+			}
+		} else if (message == Message.INIT) {
+			System.out.println("Starting initialization");
+
+			System.out.println("Creating Entities");
+
+			renderer = getContext().actorOf(
+					Props.create(Renderer.class).withDispatcher(
+							"akka.actor.fixed-thread-dispatcher"), "Renderer");
+			unitState.put(renderer, false);
+
+			simulator = getContext().actorOf(Props.create(Simulator.class),
+					"Simulator");
+			unitState.put(simulator, false);
+
+			input = getContext().actorOf(Props.create(Input.class), "Input");
+			unitState.put(input, false);
+			
+			observers.put(Events.NODE_CREATION, renderer);
+			observers.put(Events.NODE_CREATION, simulator);
+			observers.put(Events.NODE_MODIFICATION, renderer);
+			observers.put(Events.NODE_MODIFICATION, simulator);
+			
+			System.out.println("Initializing Entities");
+
+			renderer.tell(new RendererInitialization(0), self());
+			simulator.tell(Message.INIT, self());
+		} else if (message instanceof RendererInitialized) {
+			shader = ((RendererInitialized) message).shader;
+			
+			System.out.println("Initializing App");
+
+			initialize();
+
+			System.out.println("App initialized");
+			
+			
+			input.tell(Message.INIT, self());
+		} else if (message instanceof NodeCreation) {
+			
+			announce(message);
+		} else if (message instanceof NodeModification) {
+			
+			announce(message);
+		} else if (message instanceof CameraCreation) {
+			
+			announce(message);
+		} else if (message instanceof StartNodeModification) {
+			
+			announce(message);
+		}
+	}
+
+	protected void initialize() {
+	}
+
+	public <T> void announce(T event) {
+		if (event instanceof NodeCreation || event instanceof CameraCreation) {
+			for (ActorRef observer : observers.get(Events.NODE_CREATION)) {
+				observer.tell(event, self());
+			}
+		} else if (event instanceof NodeModification || event instanceof StartNodeModification) {
+			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) {
+				observer.tell(event, self());
+			}
+		}
+	}
+
+	protected void setCamera(Camera cam) {
+		camera = cam;
+		nodes.put(cam.id, cam);
+		
+		CameraCreation cc = new CameraCreation();
+		cc.id = cam.id;
+		announce(cc);
+	}
+	
+	protected void setStart(GroupNode n) {
+		startNode = n;
+		nodes.put(n.id, n);
+		
+		StartNodeModification snm = new StartNodeModification();
+		snm.id = n.id;
+		announce(snm);
+	}
+	
+	protected void transform(Node n, Matrix m) {
+		n.setLocalTransform(m);
+		
+		NodeModification nm = new NodeModification();
+		nm.id = n.id;
+		nm.localMod = m;
+		announce(nm);
+	}
+	
+	protected void append(Node n, Node m) {
+		n.appendTo(m);
+		
+		NodeModification nm = new NodeModification();
+		nm.id = n.id;
+		nm.appendTo = m.id;
+		
+		System.out.println("__ Appending " + n.id + " to " + m.id);
+		
+		
+		announce(nm);
+	}
+	
+	protected GroupNode createGroup(String id) {
+		GroupNode group = nodeFactory.groupNode(id);
+		nodes.put(id, group);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.GROUP;
+        n.shader = null;
+        announce(n);
+        
+        return group;
+	}
+	
+	protected Cube createCube(String id, Shader shader) {
+		Cube cube = nodeFactory.cube(id, shader);
+		nodes.put(id, cube);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.CUBE;
+        n.shader = shader;
+        announce(n);
+        
+        return cube;
+	}
 }

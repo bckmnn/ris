@@ -21,8 +21,8 @@ public abstract class Shape extends Node{
 	protected FloatBuffer colorData;
 	protected Shader shader;
 		
-	public Shape(Vertex[] vertices, Shader shader){
-		super(FactoryDefault.vecmath.identityMatrix());
+	public Shape(String id, Vertex[] vertices, Shader shader){
+		super(id, FactoryDefault.vecmath.identityMatrix());
 		this.vertices = vertices;
 		this.shader = shader;		
 		// Prepare the vertex data arrays.
@@ -43,7 +43,7 @@ public abstract class Shape extends Node{
 	
 	public void display(){
 	    
-	    System.out.println("Displaying " + name);
+	    System.out.println("Displaying " + id);
 	    
 		shader.activate();
 		

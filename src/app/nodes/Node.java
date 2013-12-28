@@ -2,7 +2,6 @@ package app.nodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,36 +10,33 @@ import app.edges.Edge;
 import app.vecmath.Matrix;
 import app.vecmathimp.FactoryDefault;
 
-public abstract class Node implements Cloneable {
+public abstract class Node {
     private Matrix modelMatrix, worldTrafo;
     protected List<Edge> edges = new ArrayList<Edge>();
-    public String name;
+    public String id;
 
     public Matrix getWorldTransform() {
         return worldTrafo;
     }
 
-    protected Node() {
-
+    protected Node(String id) {
+    	this.id = id;
     }
 
-    protected Node(Matrix modelMatrix) {
+    protected Node(String id, Matrix modelMatrix) {
+    	this.id = id;
         setLocalTransform(modelMatrix);
         updateWorldTransform(FactoryDefault.vecmath.identityMatrix());
     }
 
-    protected Node(Matrix modelMatrix, Node n) {
+    protected Node(String id, Matrix modelMatrix, Node n) {
+    	this(id, modelMatrix);
         new DefaultEdge(n, this);
-
-        setLocalTransform(modelMatrix);
-        updateWorldTransform(FactoryDefault.vecmath.identityMatrix());
     }
 
-    protected Node(Matrix modelMatrix, Node n, Map<String, String> data) {
-        new DefaultEdge(this, n, data);
-
-        setLocalTransform(modelMatrix);
-        updateWorldTransform(FactoryDefault.vecmath.identityMatrix());
+    protected Node(String id, Matrix modelMatrix, Node n, Map<String, String> data) {
+    	this(id, modelMatrix);
+        new DefaultEdge(n, this, data);
     }
 
     public Matrix getLocalTransform() {

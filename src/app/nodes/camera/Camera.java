@@ -5,8 +5,8 @@ import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
 public class Camera extends Node {
-	public Camera(){
-		super(FactoryDefault.vecmath.identityMatrix());
+	public Camera(String id){
+		super(id, FactoryDefault.vecmath.identityMatrix());
 	}
 	
 	@Override

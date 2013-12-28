@@ -6,8 +6,8 @@ import app.vecmath.Vector;
 import static app.nodes.shapes.Vertex.*;
 
 public class Cube extends Shape{	
-	public Cube(Shader shader){
-		super(vertices, shader);
+	public Cube(String id, Shader shader){
+		super(id, vertices, shader);
 	}
 
 	

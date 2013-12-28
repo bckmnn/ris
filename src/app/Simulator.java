@@ -1,12 +1,17 @@
 package app;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import akka.actor.UntypedActor;
 import app.messages.Message;
 import app.nodes.Node;
 
 public class Simulator extends UntypedActor {
-    private Node startNode;
+    
+    private Map<String, Node> nodes = new HashMap<String, Node>();
+
     
     private void initialize() {
         getSender().tell(Message.INITIALIZED, self());

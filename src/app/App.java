@@ -1,16 +1,21 @@
 package app;
 
 import static app.vecmathimp.FactoryDefault.vecmath;
+import static app.nodes.NodeFactory.nodeFactory;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import app.messages.Message;
 import app.nodes.GroupNode;
-import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
-import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
+/**
+ * Put your stuff here
+ * 
+ * @author Constantin
+ *
+ */
 public class App extends WorldState {
 
     /**
@@ -18,30 +23,26 @@ public class App extends WorldState {
      * 1. Create a camera
      * 2. Create nodes
      * 3. Assign a starting node
-     * 4. Launch super.initialize();
-     * 5. ???
-     * 6. Profit!
+     * 4. ???
+     * 5. Profit!
      */
     @Override
     protected void initialize() {
     	    	
-        camera = new Camera();
-        camera.setLocalTransform(FactoryDefault.vecmath.translationMatrix(0, 0, 3));
-        camera.name = "Cam";
+        setCamera(nodeFactory.camera("Cam"));
+        transform(camera, FactoryDefault.vecmath.translationMatrix(0, 0, 3));
         
-        GroupNode head = new GroupNode();
-        head.name = "Head";
+        GroupNode head = createGroup("Group");
+        setStart(head);
         
-        Cube cube = new Cube(shader);
-        cube.appendTo(head);
-        cube.name = "Cube 1";
+        System.out.println("Using shader " + shader);
         
-        Cube c2 = new Cube(shader);
-        c2.setLocalTransform(vecmath.translationMatrix(1, 1, 0));
-        c2.appendTo(head);
-        c2.name = "c2";
+        Cube c1 = createCube("Cube1", shader);
+        append(c1, head);
         
-        startNode = head;
+        Cube c2 = createCube("Cube2", shader);
+        transform(c2, vecmath.translationMatrix(1, 1, 0));
+        append(c2, head);
     }
 
     public static void main(String[] args) {

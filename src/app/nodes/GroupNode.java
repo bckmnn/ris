@@ -7,20 +7,21 @@ import app.vecmath.Matrix;
 
 public class GroupNode extends Node {
 
-	public GroupNode() {
-		super();
+	public GroupNode(String id, Matrix modelMatrix, Node n,
+			Map<String, String> data) {
+		super(id, modelMatrix, n, data);
 	}
 
-	public GroupNode(Matrix modelMatrix, Node n, Map<String, String> data) {
-		super(modelMatrix, n, data);
+	public GroupNode(String id, Matrix modelMatrix, Node n) {
+		super(id, modelMatrix, n);
 	}
 
-	public GroupNode(Matrix modelMatrix, Node n) {
-		super(modelMatrix, n);
+	public GroupNode(String id, Matrix modelMatrix) {
+		super(id, modelMatrix);
 	}
 
-	public GroupNode(Matrix modelMatrix) {
-		super(modelMatrix);
+	public GroupNode(String id) {
+		super(id);
 	}
 
 	@Override
