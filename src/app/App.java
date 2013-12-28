@@ -1,7 +1,6 @@
 package app;
 
 import static app.vecmathimp.FactoryDefault.vecmath;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -9,11 +8,13 @@ import app.messages.Message;
 import app.nodes.GroupNode;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
+import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
 public class App extends WorldState {
 
     /**
+     * 0. Pick shader of choice // TODO
      * 1. Create a camera
      * 2. Create nodes
      * 3. Assign a starting node
@@ -23,9 +24,7 @@ public class App extends WorldState {
      */
     @Override
     protected void initialize() {
-        
-        System.out.println("Initializing App");
-        
+    	    	
         camera = new Camera();
         camera.setLocalTransform(FactoryDefault.vecmath.translationMatrix(0, 0, 3));
         camera.name = "Cam";

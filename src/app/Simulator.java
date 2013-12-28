@@ -13,9 +13,7 @@ public class Simulator extends UntypedActor {
     }
 
     private void simulate() {
-        
-        // Nodes updaten
-        
+                
         getSender().tell(Message.DONE, self());
     }
     

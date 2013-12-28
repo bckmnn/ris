@@ -1,9 +1,11 @@
 package app.messages;
 
-import app.shader.Shader;
-
 public class RendererInitialization {
 
-    public Shader shader;
+    public int shader;
+    
+    public RendererInitialization(int shader) {
+    	this.shader = shader;
+    }
     
 }

@@ -10,6 +10,8 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import app.messages.Message;
+import app.messages.RendererInitialization;
+import app.messages.RendererInitialized;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.shader.Shader;
@@ -27,7 +29,6 @@ public class WorldState extends UntypedActor {
     protected Node startNode;
     protected Camera camera;
     protected Shader shader;
-    protected Set<Node> updateNodes = new HashSet<Node>();
 
     private void loop() {
 
@@ -62,7 +63,7 @@ public class WorldState extends UntypedActor {
                     entry.setValue(false);
                 }
                 
-                System.out.println("Initialization finished " + time.elapsed());
+                System.out.printf("Initialization finished in %.3fs", time.elapsed());
                 
                 loop();
             }
@@ -70,18 +71,29 @@ public class WorldState extends UntypedActor {
             System.out.println("Starting initialization");
             time.elapsed();
             
-            initialize();
-
+            System.out.println("Creating Entities");
+            
             renderer = getContext().actorOf(Props.create(Renderer.class).withDispatcher("akka.actor.fixed-thread-dispatcher"), "Renderer");
             unitState.put(renderer, false);
-            renderer.tell(Message.INIT, self());
 
             simulator = getContext().actorOf(Props.create(Simulator.class), "Simulator");
             unitState.put(simulator, false);
-            simulator.tell(Message.INIT, self());
-        } else if (message == Message.RENDERER_INITIALIZED) {
+            
             input = getContext().actorOf(Props.create(Input.class), "Input");
             unitState.put(input, false);
+            
+            System.out.println("Initializing App");
+
+            initialize();
+            
+            System.out.println("App initialized");
+            
+            System.out.println("Initializing Entities");
+            
+            renderer.tell(new RendererInitialization(0), self());
+            simulator.tell(Message.INIT, self());
+        } else if (message instanceof RendererInitialized) {
+        	shader = ((RendererInitialized) message).shader;
             input.tell(Message.INIT, self());
         }
     }
