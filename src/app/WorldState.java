@@ -72,12 +72,11 @@ public class WorldState extends UntypedActor{
 		if (message == Message.DONE) {
 			unitState.put(getSender(), true);
 
-			System.out.println(time.elapsed() + " " + unitState);
-
 			if (!unitState.containsValue(false)) {
 				for (Map.Entry<ActorRef, Boolean> entry : unitState.entrySet()) {
 					entry.setValue(false);
 				}
+				System.out.printf("Took %.2fms at %.1ffps.%n", time.elapsed()*1000, time.fps);
 				loop();
 			}
 		} else if (message == Message.INITIALIZED) {

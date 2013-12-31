@@ -3,6 +3,11 @@ package app;
 import akka.actor.UntypedActor;
 import app.messages.Message;
 
+/**
+ * TODO
+ * @author Constantin
+ *
+ */
 public class Input extends UntypedActor {
 
     private void initialize() {

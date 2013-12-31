@@ -11,7 +11,7 @@ import app.nodes.shapes.Cube;
 import app.vecmathimp.FactoryDefault;
 
 /**
- * Put your stuff here
+ * Put your stuff in here
  * 
  * @author Constantin
  *
