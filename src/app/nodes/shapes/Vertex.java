@@ -7,10 +7,29 @@ import app.vecmath.Vector;
 public class Vertex {
 	Vector position;
 	Color color;
+	public Vector normal;
+	public Vector texcoord;
 
 	Vertex(Vector p, Color c) {
 		position = p;
 		color = c;
+	}
+	
+	public Vertex(Vector p, Color c, Vector n) {
+		position = p;
+		color = c;
+		normal = n;
+	}
+	
+	public Vertex(Vector p, Color c, Vector n, Vector tex) {
+		position = p;
+		color = c;
+		normal = n;
+		texcoord=tex;
+	}
+	
+	public void setNormal(Vector normal) {
+		this.normal = normal;
 	}
 	
 	// Make construction of vertices easy on the eyes.

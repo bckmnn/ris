@@ -227,4 +227,16 @@ public class WorldState extends UntypedActor{
         
         return cube;
 	}
+	protected Cube createCube(String id, Shader shader, float w, float h, float d) {
+		Cube cube = nodeFactory.cube(id, shader, w, h, d);
+		nodes.put(id, cube);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.CUBE;
+        n.shader = shader;
+        announce(n);
+        
+        return cube;
+	}
 }

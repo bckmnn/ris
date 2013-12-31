@@ -9,6 +9,11 @@ import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.LinkedList;
+
 import org.lwjgl.opengl.GL20;
 
 import app.toolkit.MatrixUniform;
@@ -21,7 +26,7 @@ public class Shader {
 	private static Matrix projectionMatrix = FactoryDefault.vecmath.identityMatrix();
 	
 	// The vertex program source code.
-	private String[] vsSource = {
+	private String[] vsSource /*= {
 			"uniform mat4 modelMatrix;",
 			"uniform mat4 viewMatrix;",
 			"uniform mat4 projectionMatrix;",
@@ -33,14 +38,14 @@ public class Shader {
 			"void main() {",
 			"  fcolor = color;",
 			"  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex, 1);",
-	"}" };
+	"}" }*/;
 
 	// The fragment program source code.
-	private String[] fsSource = { 
+	private String[] fsSource /*= { 
 			"varying vec3 fcolor;",
 			"void main() {", 
 			"  gl_FragColor = vec4(fcolor, 1.0);", 
-	"}" };
+	"}" }*/;
 
 	// The shader program.
 	private int program;
@@ -84,8 +89,21 @@ public class Shader {
 	// The attribute indices for the vertex data.
 	public static int vertexAttribIdx = 0;
 	public static int colorAttribIdx = 1;
+	public static int normalAttribIdx = 2;
 	
 	public Shader(){
+		vsSource =readFile(new File("src/app/shadercode/basicVertex.txt"));
+		fsSource = readFile(new File("src/app/shadercode/basicFragment.txt"));
+		init();
+	}
+	
+	public Shader(File vertexShader, File fragmentShader){
+		vsSource =readFile(vertexShader);
+		fsSource = readFile(fragmentShader);
+		init();
+	}
+	
+	private void init(){
 		int vs = glCreateShader(GL20.GL_VERTEX_SHADER);
 		glShaderSource(vs, vsSource);
 		glCompileShader(vs);
@@ -108,6 +126,7 @@ public class Shader {
 		// be done *before* linking the program.
 		glBindAttribLocation(program, vertexAttribIdx, "vertex");
 		glBindAttribLocation(program, colorAttribIdx, "color");
+		glBindAttribLocation(program, normalAttribIdx, "normal");
 
 		// Link the shader program.
 		glLinkProgram(program);
@@ -118,5 +137,22 @@ public class Shader {
 		modelMatrixUniform = new MatrixUniform(program, "modelMatrix");
 		viewMatrixUniform = new MatrixUniform(program, "viewMatrix");
 		projectionMatrixUniform = new MatrixUniform(program, "projectionMatrix");
+	}
+	private String[] readFile(File f){
+		LinkedList<String> lines=new LinkedList<String>();
+	    try {
+	    	BufferedReader br = new BufferedReader(new FileReader(f));
+	        String line = br.readLine();
+	        
+	        while (line != null) {
+	        	lines.add(line);
+	        	lines.add("\n");
+	            line = br.readLine();
+	        }
+	        br.close();
+	    }catch(Exception e){
+	    	System.out.println(e.getMessage());
+	    }
+		return lines.toArray(new String[0]);
 	}
 }

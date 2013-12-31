@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class Renderer extends UntypedActor {
         glEnable(GL11.GL_DEPTH_TEST);
         
         shader = new Shader();
+//        shader = new Shader(new File("src/app/shadercode/backgroundVertShader"), new File("src/app/shadercode/backgroundFragShader"));
 
         getSender().tell(new RendererInitialized(shader), self());
         getSender().tell(Message.INITIALIZED, self());
