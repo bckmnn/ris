@@ -1,8 +1,8 @@
-package ogl.nodes.shapes;
+package app.nodes.shapes;
 
-import static ogl.vecmathimp.FactoryDefault.vecmath;
-import ogl.vecmath.Color;
-import ogl.vecmath.Vector;
+import static app.vecmathimp.FactoryDefault.vecmath;
+import app.vecmath.Color;
+import app.vecmath.Vector;
 
 public class Vertex {
 	Vector position;

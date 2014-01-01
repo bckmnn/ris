@@ -1,8 +1,8 @@
-package ogl.nodes.camera;
+package app.nodes.camera;
 
-import ogl.nodes.Node;
-import ogl.shader.Shader;
-import ogl.vecmathimp.FactoryDefault;
+import app.nodes.Node;
+import app.shader.Shader;
+import app.vecmathimp.FactoryDefault;
 
 public class Camera extends Node {
 	public Camera(){
