@@ -36,7 +36,7 @@ public class Renderer extends UntypedActor {
 	private static final int width = 640;
 	private static final int height = 480;
 
-	private boolean multisampling = true;
+	private boolean multisampling = false;
 
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
@@ -49,7 +49,7 @@ public class Renderer extends UntypedActor {
 			Display.setDisplayMode(new DisplayMode(width, height));
 
 			if (multisampling)
-				Display.create();
+				Display.create(new PixelFormat().withSamples(8));
 			else
 				Display.create();
 
