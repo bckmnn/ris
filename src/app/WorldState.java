@@ -181,7 +181,7 @@ public class WorldState extends UntypedActor{
 	}
 	
 	protected void transform(Node n, Matrix m) {
-		n.setLocalTransform(m);
+		n.updateWorldTransform(m);
 		
 		NodeModification nm = new NodeModification();
 		nm.id = n.id;

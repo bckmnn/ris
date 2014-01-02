@@ -26,7 +26,8 @@ public abstract class Node {
     protected Node(String id, Matrix modelMatrix) {
     	this.id = id;
         setLocalTransform(modelMatrix);
-        updateWorldTransform(FactoryDefault.vecmath.identityMatrix());
+        updateWorldTransform();
+//        updateWorldTransform(FactoryDefault.vecmath.identityMatrix());
     }
 
     protected Node(String id, Matrix modelMatrix, Node n) {
@@ -48,7 +49,7 @@ public abstract class Node {
     }
 
     public void updateWorldTransform(Matrix previousTrafo) {
-        worldTrafo = previousTrafo.mult(getLocalTransform());
+        worldTrafo = previousTrafo.mult(getWorldTransform());
     }
 
     public void updateWorldTransform() {

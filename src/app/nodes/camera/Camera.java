@@ -14,7 +14,7 @@ public class Camera extends Node {
 	}
 	
 	public void activate(){
-		Shader.setViewMatrix(getLocalTransform().invertFull());
+		Shader.setViewMatrix(getWorldTransform().invertFull());
 	}
 	
 }

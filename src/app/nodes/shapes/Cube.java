@@ -4,18 +4,30 @@ import java.io.File;
 import java.nio.FloatBuffer;
 
 import app.nodes.shapes.Texture;
+
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+
 import app.shader.Shader;
 import app.vecmath.Color;
 import app.vecmath.Vector;
 import static app.nodes.shapes.Vertex.*;
 import static app.vecmathimp.FactoryDefault.vecmath;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class Cube extends Shape {
 	// Width, depth and height of the cube divided by 2.
-	private float w2 = 0.5f;
-	private float h2 = 0.5f;
-	private float d2 = 0.5f;
+	private float w2/* = 0.5f*/;
+	private float h2/* = 0.5f*/;
+	private float d2/* = 0.5f*/;
+	private FloatBuffer positionData;
+	private FloatBuffer colorData;
+	private FloatBuffer normalData;
+	private FloatBuffer textureData;
+	private Texture tex;
 
 	//
 	// 6 ------- 7
@@ -28,9 +40,9 @@ public class Cube extends Shape {
 	//
 
 	// The positions of the cube vertices.
-	private Vector[] p = { vec(-w2, -h2, -d2), vec(w2, -h2, -d2),
+	private Vector[] p /*= { vec(-w2, -h2, -d2), vec(w2, -h2, -d2),
 			vec(w2, h2, -d2), vec(-w2, h2, -d2), vec(w2, -h2, d2),
-			vec(-w2, -h2, d2), vec(-w2, h2, d2), vec(w2, h2, d2) };
+			vec(-w2, -h2, d2), vec(-w2, h2, d2), vec(w2, h2, d2) }*/;
 
 	// The colors of the cube vertices.
 	private Color[] c = { col(0, 0, 0), col(1, 0, 0), col(1, 1, 0),
@@ -45,7 +57,7 @@ public class Cube extends Shape {
 	// Vertices combine position and color information. Every four vertices
 	// define
 	// one side of the cube.
-	Vertex[] vertices = {
+	Vertex[] vertices /*- = {
 	// front
 			v(p[0], c[0]), v(p[1], c[1]), v(p[2], c[2]), v(p[3], c[3]),
 			// back
@@ -57,21 +69,14 @@ public class Cube extends Shape {
 			// left
 			v(p[5], c[5]), v(p[0], c[0]), v(p[3], c[3]), v(p[6], c[6]),
 			// bottom
-			v(p[5], c[5]), v(p[4], c[4]), v(p[1], c[1]), v(p[0], c[0]) };
+			v(p[5], c[5]), v(p[4], c[4]), v(p[1], c[1]), v(p[0], c[0]) }*/;
 
 	public Cube(String id, Shader shader) {
-		super(id, shader);
-		buffBasic();
+		this(id, shader, 0.5f,0.5f,0.5f);
 	}
 
 	public Cube(String id, Shader shader, float w, float h, float d) {
-		super(id, shader);
-		w2 = w;
-		h2 = h;
-		d2 = d;
-		defPointNew();
-		buffBasic();
-		buffNormal();
+		this(id, shader, w,h,d,null);
 	}
 	
 	public Cube(String id, Shader shader, float w, float h, float d, String sourceTex) {
@@ -80,13 +85,12 @@ public class Cube extends Shape {
 		h2 = h;
 		d2 = d;
 		defPointNew();
-		tex = new Texture(new File(sourceTex));
-		buffBasic();
-		buffNormal();
-		buffTex();
+		if(tex!=null)tex = new Texture(new File(sourceTex));
+		buff();
+		setSuper();
 	}
 
-	private void buffBasic() {
+	private void buff() {
 		// Prepare the vertex data arrays.
 		// Compile vertex data into a Java Buffer data structures that can be
 		// passed to the OpenGL API efficently.
@@ -94,38 +98,30 @@ public class Cube extends Shape {
 				* vecmath.vectorSize());
 		colorData = BufferUtils.createFloatBuffer(vertices.length
 				* vecmath.colorSize());
+		normalData = BufferUtils.createFloatBuffer(vertices.length
+				* vecmath.vectorSize());
+		textureData = BufferUtils.createFloatBuffer(vertices.length
+				* vecmath.vectorSize());
 
 		for (Vertex v : vertices) {
 			positionData.put(v.position.asArray());
 			colorData.put(v.color.asArray());
+			normalData.put(v.normal.asArray());
+			textureData.put(v.normal.asArray());
 		}
 		positionData.rewind();
 		colorData.rewind();
-		setSuperVert();
-	}
-
-	private void buffNormal() {
-		normalData = BufferUtils.createFloatBuffer(vertices.length
-				* vecmath.vectorSize());
-		for (Vertex v : vertices) {
-			normalData.put(v.normal.asArray());
-		}
 		normalData.rewind();
-		setSuperVert();
-	}
-
-	private void buffTex() {
-		textureData = BufferUtils.createFloatBuffer(vertices.length
-				* vecmath.vectorSize());
-		for (Vertex v : vertices) {
-			textureData.put(v.normal.asArray());
-		}
 		textureData.rewind();
-		setSuperVert();
 	}
 	
-	private void setSuperVert(){
+	private void setSuper(){
 		super.vertices=vertices;
+		super.positionData=positionData;
+		super.colorData=colorData;
+		super.normalData=normalData;
+		super.textureData=textureData;
+		super.tex=tex;
 	}
 
 	private void defPointNew() {
@@ -163,35 +159,35 @@ public class Cube extends Shape {
 
 		Vertex[] vert = {
 				// front
-				new Vertex(p[0], c[1], n[0], t[3]),
+				new Vertex(p[0], c[0], n[0], t[3]),
 				new Vertex(p[1], c[1], n[1], t[2]),
-				new Vertex(p[2], c[1], n[2], t[1]),
-				new Vertex(p[3], c[1], n[3], t[0]),
+				new Vertex(p[2], c[2], n[2], t[1]),
+				new Vertex(p[3], c[3], n[3], t[0]),
 				// back
-				new Vertex(p[4], c[1], n[4], t[2]),
-				new Vertex(p[5], c[1], n[5], t[3]),
-				new Vertex(p[6], c[1], n[6], t[0]),
-				new Vertex(p[7], c[1], n[7], t[1]),
+				new Vertex(p[4], c[4], n[4], t[2]),
+				new Vertex(p[5], c[5], n[5], t[3]),
+				new Vertex(p[6], c[6], n[6], t[0]),
+				new Vertex(p[7], c[7], n[7], t[1]),
 				// right
 				new Vertex(p[1], c[1], n[1], t[3]),
-				new Vertex(p[4], c[1], n[4], t[2]),
-				new Vertex(p[7], c[1], n[7], t[1]),
-				new Vertex(p[2], c[1], n[2], t[0]),
+				new Vertex(p[4], c[4], n[4], t[2]),
+				new Vertex(p[7], c[7], n[7], t[1]),
+				new Vertex(p[2], c[2], n[2], t[0]),
 				// top
-				new Vertex(p[3], c[1], n[3], t[3]),
-				new Vertex(p[2], c[1], n[3], t[2]),
-				new Vertex(p[7], c[1], n[7], t[1]),
-				new Vertex(p[6], c[1], n[6], t[0]),
+				new Vertex(p[3], c[3], n[3], t[3]),
+				new Vertex(p[2], c[2], n[3], t[2]),
+				new Vertex(p[7], c[7], n[7], t[1]),
+				new Vertex(p[6], c[6], n[6], t[0]),
 				// left
-				new Vertex(p[5], c[1], n[5], t[3]),
-				new Vertex(p[0], c[1], n[0], t[2]),
-				new Vertex(p[3], c[1], n[3], t[1]),
-				new Vertex(p[6], c[1], n[6], t[0]),
+				new Vertex(p[5], c[5], n[5], t[3]),
+				new Vertex(p[0], c[0], n[0], t[2]),
+				new Vertex(p[3], c[3], n[3], t[1]),
+				new Vertex(p[6], c[6], n[6], t[0]),
 				// bottom
-				new Vertex(p[5], c[1], n[5], t[0]),
-				new Vertex(p[4], c[1], n[4], t[1]),
+				new Vertex(p[5], c[5], n[5], t[0]),
+				new Vertex(p[4], c[4], n[4], t[1]),
 				new Vertex(p[1], c[1], n[1], t[3]),
-				new Vertex(p[0], c[1], n[0], t[2]) };
+				new Vertex(p[0], c[0], n[0], t[2]) };
 		vertices = vert;
 	}
 }

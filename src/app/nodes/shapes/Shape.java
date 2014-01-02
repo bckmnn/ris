@@ -29,7 +29,6 @@ public abstract class Shape extends Node{
 	}	
 	
 	public void display(){
-	    
 	    System.out.println("Displaying " + id);
 	    
 		shader.activate();
@@ -37,7 +36,7 @@ public abstract class Shape extends Node{
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			tex.display();
 		}
-		shader.setModelMatrix(getLocalTransform());
+		shader.setModelMatrix(getWorldTransform());
 		// Enable the vertex data arrays (with indices 0 and 1). We use a vertex
 		// position and a vertex color.
 		glVertexAttribPointer(Shader.vertexAttribIdx, 3, false, 0, positionData);
