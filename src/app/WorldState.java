@@ -35,6 +35,7 @@ import app.nodes.GroupNode;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
 import app.vecmath.Matrix;
@@ -56,6 +57,7 @@ public class WorldState extends UntypedActor{
 	private ActorRef renderer;
 	private ActorRef simulator;
 	private ActorRef input;
+	private ActorRef physic;
 
 	protected Node startNode;
 	protected Camera camera;
@@ -68,6 +70,7 @@ public class WorldState extends UntypedActor{
 		simulator.tell(Message.LOOP, self());
 		input.tell(Message.LOOP, self());
 		renderer.tell(Message.DISPLAY, self());
+		physic.tell(Message.LOOP, self());
 	}
 
 	@Override
@@ -115,15 +118,20 @@ public class WorldState extends UntypedActor{
 			input = getContext().actorOf(Props.create(Input.class), "Input");
 			unitState.put(input, false);
 			
+			physic = getContext().actorOf(Props.create(Physic.class), "Physic");
+			unitState.put(physic, false);
+			
 			observers.put(Events.NODE_CREATION, renderer);
 			observers.put(Events.NODE_CREATION, simulator);
 			observers.put(Events.NODE_MODIFICATION, renderer);
 			observers.put(Events.NODE_MODIFICATION, simulator);
+			observers.put(Events.NODE_MODIFICATION, physic);
 			
 			System.out.println("Initializing Entities");
 
 			renderer.tell(new RendererInitialization(0), self());
 			simulator.tell(Message.INIT, self());
+			physic.tell(Message.INIT, self());
 		} else if (message instanceof RendererInitialized) {
 			shader = ((RendererInitialized) message).shader;
 			
@@ -219,17 +227,9 @@ public class WorldState extends UntypedActor{
 	}
 	
 	protected Cube createCube(String id, Shader shader) {
-		Cube cube = nodeFactory.cube(id, shader);
-		nodes.put(id, cube);
-		
-		NodeCreation n = new NodeCreation();
-        n.id = id;
-        n.type = Types.CUBE;
-        n.shader = shader;
-        announce(n);
-        
-        return cube;
+		return createCube(id, shader, 1, 1, 1);
 	}
+	
 	protected Cube createCube(String id, Shader shader, float w, float h, float d) {
 		Cube cube = nodeFactory.cube(id, shader, w, h, d);
 		nodes.put(id, cube);
@@ -238,9 +238,44 @@ public class WorldState extends UntypedActor{
         n.id = id;
         n.type = Types.CUBE;
         n.shader = shader;
+        
+        n.d = d;
+        n.w = w;
+        n.h = h;
+        
         announce(n);
         
         return cube;
+	}
+	
+	protected Pipe createPipe(String id, Shader shader, float r, int lats, int longs) {
+		Pipe pipe = nodeFactory.pipe(id, shader, r, lats, longs);
+		nodes.put(id, pipe);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.PIPE;
+        n.shader = shader;
+        
+        n.r = r;
+        n.lats = lats;
+        n.longs = longs;
+        
+        announce(n);
+        
+        return pipe;
+	}
+
+	protected void addPhysic(Cube cube){
+		
+		NodeCreation n = new NodeCreation();
+		n.id = cube.id;
+		n.type = Types.CUBE;
+		n.shader = cube.getShader();
+		
+		physic.tell(n, self());
+	
+		
 	}
 	
 	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode){

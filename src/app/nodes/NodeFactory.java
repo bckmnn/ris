@@ -5,6 +5,7 @@ import java.util.Map;
 
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
 import app.shader.Shader;
 import app.vecmath.Matrix;
 
@@ -48,9 +49,13 @@ public class NodeFactory {
 		return n;
 	}
 
-	//TODO: Sinn mit mehrern konstruktoren?
 	public Cube cube(String id, Shader shader, float w, float h, float d) {
 		Cube n = new Cube(id, shader, w, h, d);
 		return n;
+	}
+	
+	public Pipe pipe(String id, Shader shader, float r, int lats, int longs) {
+		Pipe p = new Pipe(id, shader, r, lats, longs);
+		return p;
 	}
 }

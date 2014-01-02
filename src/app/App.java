@@ -11,6 +11,7 @@ import akka.actor.Props;
 import app.messages.Message;
 import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
@@ -18,46 +19,46 @@ import app.vecmathimp.FactoryDefault;
  * Put your stuff here
  * 
  * @author Constantin
- *
+ * 
  */
 public class App extends WorldState {
 
-    /**
-     * 0. Pick shader of choice // TODO
-     * 1. Create a camera
-     * 2. Create nodes
-     * 3. Assign a starting node
-     * 4. ???
-     * 5. Profit!
-     */
-    @Override
-    protected void initialize() {
-    	    	
-        setCamera(nodeFactory.camera("Cam"));
-        transform(camera, FactoryDefault.vecmath.translationMatrix(0, 0, 3));
-        
-        GroupNode head = createGroup("Group");
-        setStart(head);
-        
-        System.out.println("Using shader " + shader);
-        
-        Cube c1 =createCube("Cube1", shader);
-//        Cube c1 = createCube("Cube1", new Shader(new File("src/app/shadercode/texturesVertex"), new File("src/app/shadercode/texturesFragment")));
-        append(c1, head);
-        
-        Cube c2 = createCube("Cube2", shader);
-        transform(c2, vecmath.translationMatrix(1, 1, 0));
-        append(c2, head);
-        
-        Cube c3 = createCube("Cube3", shader, 6f, 6f, 1.0f);
-        transform(c3, vecmath.scaleMatrix(2, 2, 1));
-        transform(c3, vecmath.translationMatrix(-1, 0, 0));
-        append(c3, head);
-        
-    }
+	/*-
+	 * 0. Pick shader of choice // TODO 
+	 * 1. Create a camera 
+	 * 2. Create nodes 
+	 * 3. Assign a starting node 
+	 * 4. ??? 
+	 * 5. Profit!
+	 */
+	@Override
+	protected void initialize() {
 
-    public static void main(String[] args) {
-        system = ActorSystem.create();
-        system.actorOf(Props.create(App.class), "App").tell(Message.INIT, ActorRef.noSender());
-    }
+		setCamera(nodeFactory.camera("Cam"));
+		transform(camera, FactoryDefault.vecmath.translationMatrix(0, 0, 3));
+
+		GroupNode head = createGroup("Group");
+		setStart(head);
+
+		System.out.println("Using shader " + shader);
+
+		Cube c1 = createCube("Cube1", shader, 0.3f, 0.3f, 0.3f);
+		append(c1, head);
+		addPhysic(c1);
+
+		Cube c2 = createCube("Cube2", shader, 1.5f, 1.5f, 1.5f);
+		transform(c2, vecmath.translationMatrix(1, 0, 0));
+		append(c2, head);
+
+		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
+		transform(c3, vecmath.translationMatrix(-1.5f, 0, 0));
+		append(c3, head);
+
+	}
+
+	public static void main(String[] args) {
+		system = ActorSystem.create();
+		system.actorOf(Props.create(App.class), "App").tell(Message.INIT,
+				ActorRef.noSender());
+	}
 }

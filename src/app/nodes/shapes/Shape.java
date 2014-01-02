@@ -14,7 +14,7 @@ import app.nodes.shapes.Vertex;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
-public abstract class Shape extends Node{
+public abstract class Shape extends Node {
 	protected Vertex[] vertices;
 	protected FloatBuffer positionData;
 	protected FloatBuffer colorData;
@@ -22,15 +22,17 @@ public abstract class Shape extends Node{
 	protected FloatBuffer textureData;
 	protected Texture tex;
 	protected Shader shader;
-		
-	public Shape(String id, Shader shader){
+	protected int mode = GL11.GL_QUADS;
+
+	public Shape(String id, Shader shader) {
 		super(id, FactoryDefault.vecmath.identityMatrix());
 		this.shader = shader;
-	}	
-	
-	public void display(){
-	    System.out.println("Displaying " + id);
-	    
+	}
+
+	public void display() {
+
+		System.out.println("Displaying " + id);
+
 		shader.activate();
 		if (tex != null) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -43,8 +45,9 @@ public abstract class Shape extends Node{
 		glEnableVertexAttribArray(Shader.vertexAttribIdx);
 		glVertexAttribPointer(Shader.colorAttribIdx, 3, false, 0, colorData);
 		glEnableVertexAttribArray(Shader.colorAttribIdx);
-		if(normalData!=null){
-			glVertexAttribPointer(Shader.normalAttribIdx, 3, false, 0, normalData);
+		if (normalData != null) {
+			glVertexAttribPointer(Shader.normalAttribIdx, 3, false, 0,
+					normalData);
 			glEnableVertexAttribArray(Shader.normalAttribIdx);
 		}
 		if (tex != null) {
@@ -53,6 +56,11 @@ public abstract class Shape extends Node{
 		}
 
 		// Draw the triangles that form the cube from the vertex data arrays.
-		glDrawArrays(GL11.GL_QUADS, 0, vertices.length);
+		glDrawArrays(mode, 0, vertices.length);
 	}
+
+	public Shader getShader() {
+		return shader;
+	}
+	
 }
