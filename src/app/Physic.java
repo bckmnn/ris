@@ -19,12 +19,13 @@ public class Physic extends UntypedActor {
 
 	private void initialize() {
 		getSender().tell(Message.INITIALIZED, self());
+		System.out.println("Physic initialised");
 	}
 
 	public void physic() {
 		
 		getSender().tell(Message.DONE, self());
-
+		System.out.println("physic loop");
 	}
 
 	public void onReceive(Object message) throws Exception {
@@ -33,7 +34,7 @@ public class Physic extends UntypedActor {
 		} else if (message == Message.INIT) {
 			initialize();
 		} else if (message instanceof NodeCreation) {
-			System.out.println("NodeCreation");
+			System.out.println("PHHHHHYYYYYYYYYYYYYYYYYYYSSSSSSSSIIIIIICCC");
 
 			if (((NodeCreation) message).type == Types.GROUP) {
 				Node newNode = nodeFactory
