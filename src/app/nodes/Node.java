@@ -8,12 +8,15 @@ import java.util.Map;
 import app.edges.DefaultEdge;
 import app.edges.Edge;
 import app.vecmath.Matrix;
+import app.vecmath.Vector;
 import app.vecmathimp.FactoryDefault;
+import app.vecmathimp.VectorImp;
 
 public abstract class Node {
     private Matrix modelMatrix, worldTrafo;
     protected List<Edge> edges = new ArrayList<Edge>();
     public String id;
+    public Vector velocity;
 
     public Matrix getWorldTransform() {
         return worldTrafo;
@@ -21,7 +24,7 @@ public abstract class Node {
 
     protected Node(String id) {
     	this.id = id;
-    }
+    	   }
 
     protected Node(String id, Matrix modelMatrix) {
     	this.id = id;
@@ -88,5 +91,14 @@ public abstract class Node {
         return new HashMap<String, String>();
     }
 
-    public abstract void display();
+    
+    public Vector getVelocity() {
+		return velocity;
+	}
+
+	public void setVelocity(Vector velocity) {
+		this.velocity = velocity;
+	}
+
+	public abstract void display();
 }

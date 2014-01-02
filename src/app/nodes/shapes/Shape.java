@@ -58,4 +58,9 @@ public abstract class Shape extends Node {
 		// Draw the triangles that form the cube from the vertex data arrays.
 		glDrawArrays(mode, 0, vertices.length);
 	}
+
+	public Shader getShader() {
+		return shader;
+	}
+	
 }

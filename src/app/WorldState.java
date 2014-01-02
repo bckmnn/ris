@@ -54,6 +54,7 @@ public class WorldState extends UntypedActor{
 	private ActorRef renderer;
 	private ActorRef simulator;
 	private ActorRef input;
+	private ActorRef physic;
 
 	protected Node startNode;
 	protected Camera camera;
@@ -66,6 +67,7 @@ public class WorldState extends UntypedActor{
 		simulator.tell(Message.LOOP, self());
 		input.tell(Message.LOOP, self());
 		renderer.tell(Message.DISPLAY, self());
+		physic.tell(Message.LOOP, self());
 	}
 
 	@Override
@@ -113,15 +115,20 @@ public class WorldState extends UntypedActor{
 			input = getContext().actorOf(Props.create(Input.class), "Input");
 			unitState.put(input, false);
 			
+			physic = getContext().actorOf(Props.create(Physic.class), "Physic");
+			unitState.put(physic, false);
+			
 			observers.put(Events.NODE_CREATION, renderer);
 			observers.put(Events.NODE_CREATION, simulator);
 			observers.put(Events.NODE_MODIFICATION, renderer);
 			observers.put(Events.NODE_MODIFICATION, simulator);
+			observers.put(Events.NODE_MODIFICATION, physic);
 			
 			System.out.println("Initializing Entities");
 
 			renderer.tell(new RendererInitialization(0), self());
 			simulator.tell(Message.INIT, self());
+			physic.tell(Message.INIT, self());
 		} else if (message instanceof RendererInitialized) {
 			shader = ((RendererInitialized) message).shader;
 			
@@ -254,5 +261,17 @@ public class WorldState extends UntypedActor{
         announce(n);
         
         return pipe;
+	}
+
+	protected void addPhysic(Cube cube){
+		
+		NodeCreation n = new NodeCreation();
+		n.id = cube.id;
+		n.type = Types.CUBE;
+		n.shader = cube.getShader();
+		
+		physic.tell(n, self());
+	
+		
 	}
 }

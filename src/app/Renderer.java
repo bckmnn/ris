@@ -49,7 +49,7 @@ public class Renderer extends UntypedActor {
 			Display.setDisplayMode(new DisplayMode(width, height));
 
 			if (multisampling)
-				Display.create(new PixelFormat().withSamples(8));
+				Display.create();
 			else
 				Display.create();
 
