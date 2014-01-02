@@ -14,7 +14,7 @@
 	<classpathentry kind="lib" path="lib/vecmath-1.0/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.9.0/jar/lwjgl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ris/lib/lwjgl-2.9.0/native/macosx"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ris/lib/lwjgl-2.9.0/native/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/akka-2.2.3/akka-actor_2.10-2.2.3.jar"/>

@@ -1,40 +1,63 @@
 package app;
 
+import static app.vecmathimp.FactoryDefault.vecmath;
+import static app.nodes.NodeFactory.nodeFactory;
+
+import java.io.File;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import app.messages.Message;
-import app.nodes.camera.Camera;
+import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
+import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
+/**
+ * Put your stuff here
+ * 
+ * @author Constantin
+ * 
+ */
 public class App extends WorldState {
 
-    /**
-     * 1. Create and camera
-     * 2. Create nodes
-     * 3. Add your cam and nodes to 'updateNodes'
-     * 4. Assign a starting node
-     * 5. Launch super.initialize();
-     * 6. ???
-     * 7. Profit!
-     */
-    @Override
-    protected void initialize() {
-        camera = new Camera();
-        camera.setLocalTransform(FactoryDefault.vecmath.translationMatrix(0, 0, 3));
-        updateNodes.add(camera);
-        
-        Cube cube = new Cube(shader);
-        updateNodes.add(cube);
-        
-        startNode = cube;
-        
-        super.initialize();
-    }
+	/*-
+	 * 0. Pick shader of choice // TODO 
+	 * 1. Create a camera 
+	 * 2. Create nodes 
+	 * 3. Assign a starting node 
+	 * 4. ??? 
+	 * 5. Profit!
+	 */
+	@Override
+	protected void initialize() {
 
-    public static void main(String[] args) {
-        system = ActorSystem.create();
-        system.actorOf(Props.create(App.class), "App").tell(Message.INIT, ActorRef.noSender());
-    }
+		setCamera(nodeFactory.camera("Cam"));
+		transform(camera, FactoryDefault.vecmath.translationMatrix(0, 0, 3));
+
+		GroupNode head = createGroup("Group");
+		setStart(head);
+
+		System.out.println("Using shader " + shader);
+
+		Cube c1 = createCube("Cube1", shader, 0.3f, 0.3f, 0.3f);
+		append(c1, head);
+
+		Cube c2 = createCube("Cube2", shader, 1.5f, 1.5f, 1.5f);
+		transform(c2, vecmath.translationMatrix(1, 0, 0));
+		append(c2, head);
+
+		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
+		transform(c3, vecmath.translationMatrix(-1.5f, 0, 0));
+		append(c3, head);
+
+	}
+
+	public static void main(String[] args) {
+		system = ActorSystem.create();
+		system.actorOf(Props.create(App.class), "App").tell(Message.INIT,
+				ActorRef.noSender());
+	}
 }
