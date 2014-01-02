@@ -139,6 +139,10 @@ public class Renderer extends UntypedActor {
 						((NodeCreation) message).lats,
 						((NodeCreation) message).longs);
 				nodes.put(newNode.id, newNode);
+			} else if (((NodeCreation) message).type == Types.SPHERE) {
+				Node newNode = nodeFactory.sphere(((NodeCreation) message).id,
+						((NodeCreation) message).shader);
+				nodes.put(newNode.id, newNode);
 			}
 
 		} else if (message instanceof CameraCreation) {

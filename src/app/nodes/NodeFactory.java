@@ -6,6 +6,7 @@ import java.util.Map;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.vecmath.Matrix;
 
@@ -57,5 +58,10 @@ public class NodeFactory {
 	public Pipe pipe(String id, Shader shader, float r, int lats, int longs) {
 		Pipe p = new Pipe(id, shader, r, lats, longs);
 		return p;
+	}
+	
+	public Sphere sphere(String id, Shader shader) {
+		Sphere s = new Sphere(id, shader);
+		return s;
 	}
 }

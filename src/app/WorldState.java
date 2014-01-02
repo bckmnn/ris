@@ -36,6 +36,7 @@ import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
 import app.vecmath.Matrix;
@@ -264,6 +265,20 @@ public class WorldState extends UntypedActor{
         announce(n);
         
         return pipe;
+	}
+	
+	protected Sphere createSphere(String id, Shader shader) {
+		Sphere sphere = nodeFactory.sphere(id, shader);
+		nodes.put(id, sphere);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.SPHERE;
+        n.shader = shader;
+        
+        announce(n);
+        
+        return sphere;
 	}
 
 	protected void addPhysic(Cube cube){

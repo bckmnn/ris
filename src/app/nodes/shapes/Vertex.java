@@ -28,6 +28,10 @@ public class Vertex {
 		texcoord=tex;
 	}
 	
+	public void newPos(Vector newPosition) {
+		position = newPosition;
+	}
+	
 	public void setNormal(Vector normal) {
 		this.normal = normal;
 	}

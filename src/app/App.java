@@ -12,6 +12,7 @@ import app.messages.Message;
 import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
@@ -51,8 +52,12 @@ public class App extends WorldState {
 		append(c2, head);
 
 		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
-		transform(c3, vecmath.translationMatrix(-1.5f, 0, 0));
+		transform(c3, vecmath.translationMatrix(-1.5f, -1, 0));
 		append(c3, head);
+		
+		Sphere c4 = createSphere("Shpere!", shader);
+		transform(c4, vecmath.translationMatrix(-1f, 1f, 0));
+		append(c4, head);
 
 	}
 
