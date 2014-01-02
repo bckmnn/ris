@@ -48,7 +48,6 @@ public class NodeFactory {
 		return n;
 	}
 
-	//TODO: Sinn mit mehrern konstruktoren?
 	public Cube cube(String id, Shader shader, float w, float h, float d) {
 		Cube n = new Cube(id, shader, w, h, d);
 		return n;

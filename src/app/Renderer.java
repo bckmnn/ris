@@ -33,126 +33,135 @@ import app.shader.Shader;
 import app.vecmath.Matrix;
 
 public class Renderer extends UntypedActor {
-    private static final int width = 640;
-    private static final int height = 480;
+	private static final int width = 640;
+	private static final int height = 480;
 
-    private boolean multisampling = true;
-    
-    private Map<String, Node> nodes = new HashMap<String, Node>();
-    
-    private Shader shader;
-    private Node start;
-    private Camera camera;
+	private boolean multisampling = true;
 
-    private void initialize() {
-        try {
-            Display.setDisplayMode(new DisplayMode(width, height));
-            
-            if (multisampling) Display.create(new PixelFormat().withSamples(8));
-            else Display.create();
+	private Map<String, Node> nodes = new HashMap<String, Node>();
 
-            // Limit to 60 FPS
-            Display.setSwapInterval(1);
-            Display.setVSyncEnabled(true);
-        } catch (LWJGLException e) {
-            e.printStackTrace();
-        }
+	private Shader shader;
+	private Node start;
+	private Camera camera;
 
-        // Set background color to black.
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	private void initialize() {
+		try {
+			Display.setDisplayMode(new DisplayMode(width, height));
 
-        // Enable depth testing.
-        glEnable(GL11.GL_DEPTH_TEST);
-        
-        shader = new Shader();
-//        shader = new Shader(new File("src/app/shadercode/backgroundVertShader"), new File("src/app/shadercode/backgroundFragShader"));
+			if (multisampling)
+				Display.create(new PixelFormat().withSamples(8));
+			else
+				Display.create();
 
-        getSender().tell(new RendererInitialized(shader), self());
-        getSender().tell(Message.INITIALIZED, self());
-    }
+			// Limit to 60 FPS
+			Display.setSwapInterval(1);
+			Display.setVSyncEnabled(true);
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
 
-    private void display() {
-        // Adjust the the viewport to the actual window size. This makes the
-        // rendered image fill the entire window.
-        glViewport(0, 0, width, height);
+		// Set background color to black.
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        // Clear all buffers.
-        glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		// Enable depth testing.
+		glEnable(GL11.GL_DEPTH_TEST);
 
-        shader.activate();
+		shader = new Shader();
+		// shader = new Shader(new
+		// File("src/app/shadercode/backgroundVertShader"), new
+		// File("src/app/shadercode/backgroundFragShader"));
 
-        // Assemble the transformation matrix that will be applied to all
-        // vertices in the vertex shader.
-        float aspect = (float) width / (float) height;
+		getSender().tell(new RendererInitialized(shader), self());
+		getSender().tell(Message.INITIALIZED, self());
+	}
 
-        // The perspective projection. Camera space to NDC.
-        Matrix projectionMatrix = vecmath.perspectiveMatrix(60f, aspect, 0.1f, 100f);
-        Shader.setProjectionMatrix(projectionMatrix);
+	private void display() {
+		// Adjust the the viewport to the actual window size. This makes the
+		// rendered image fill the entire window.
+		glViewport(0, 0, width, height);
 
-        camera.activate();
-        start.display();
-        
-        Display.setTitle("App");
-        Display.update();
-        
-        getSender().tell(Message.DONE, self());
-    }
+		// Clear all buffers.
+		glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-    @Override
-    public void onReceive(Object message) throws Exception {
-        if (message == Message.DISPLAY) {
-            display();
-        } else if (message instanceof RendererInitialization) {
-            initialize();
-        } else if (message instanceof NodeCreation) {
-        	System.out.println("NodeCreation");
-        	
-        	if (((NodeCreation) message).type == Types.GROUP) {
-        		Node newNode = nodeFactory.groupNode(((NodeCreation) message).id);
-        		nodes.put(newNode.id, newNode);
-        	} else if (((NodeCreation) message).type == Types.CUBE) {
-        		
-        		System.out.println("Shadering cube with " + ((NodeCreation) message).shader);
-        		
-        		
-        		Node newNode = nodeFactory.cube(((NodeCreation) message).id, ((NodeCreation) message).shader);
-        		nodes.put(newNode.id, newNode);
-        	}
-        	
-        	
-        } else if (message instanceof CameraCreation) {
-        	System.out.println("CameraCreation");
-        	
-        	camera = nodeFactory.camera(((CameraCreation) message).id);
-        	nodes.put(((CameraCreation) message).id, camera);
-        	
-        } else if (message instanceof NodeModification) {
-        	System.out.println("NodeModification");
-        	
-        	System.out.println("Nodes " + nodes);
-        	System.out.println("Accesing " + ((NodeModification) message).id);
-        	
-        	Node modify = nodes.get(((NodeModification) message).id);
-        	
-        	if (((NodeModification) message).localMod != null) {
+		shader.activate();
+
+		// Assemble the transformation matrix that will be applied to all
+		// vertices in the vertex shader.
+		float aspect = (float) width / (float) height;
+
+		// The perspective projection. Camera space to NDC.
+		Matrix projectionMatrix = vecmath.perspectiveMatrix(60f, aspect, 0.1f,
+				100f);
+		Shader.setProjectionMatrix(projectionMatrix);
+
+		camera.activate();
+		start.display();
+
+		Display.setTitle("App");
+		Display.update();
+
+		getSender().tell(Message.DONE, self());
+	}
+
+	@Override
+	public void onReceive(Object message) throws Exception {
+		if (message == Message.DISPLAY) {
+			display();
+		} else if (message instanceof RendererInitialization) {
+			initialize();
+		} else if (message instanceof NodeCreation) {
+			System.out.println("NodeCreation");
+
+			if (((NodeCreation) message).type == Types.GROUP) {
+				Node newNode = nodeFactory
+						.groupNode(((NodeCreation) message).id);
+				nodes.put(newNode.id, newNode);
+			} else if (((NodeCreation) message).type == Types.CUBE) {
+
+				System.out.println("Shadering cube with "
+						+ ((NodeCreation) message).shader);
+
+				Node newNode = nodeFactory.cube(((NodeCreation) message).id,
+						((NodeCreation) message).shader,
+						((NodeCreation) message).w, ((NodeCreation) message).h,
+						((NodeCreation) message).d);
+				nodes.put(newNode.id, newNode);
+			}
+
+		} else if (message instanceof CameraCreation) {
+			System.out.println("CameraCreation");
+
+			camera = nodeFactory.camera(((CameraCreation) message).id);
+			nodes.put(((CameraCreation) message).id, camera);
+
+		} else if (message instanceof NodeModification) {
+			System.out.println("NodeModification");
+
+			System.out.println("Nodes " + nodes);
+			System.out.println("Accesing " + ((NodeModification) message).id);
+
+			Node modify = nodes.get(((NodeModification) message).id);
+
+			if (((NodeModification) message).localMod != null) {
 //        		modify.setLocalTransform(((NodeModification) message).localMod);
         		modify.updateWorldTransform(((NodeModification) message).localMod);
 //        		modify.setLocalTransform(modify.getWorldTransform());
-        	}
-        	if (((NodeModification) message).appendTo != null) {
-        		
-        		System.out.println("Appending " + ((NodeModification) message).id + " to " + ((NodeModification) message).appendTo);
-        		
-        		
-        		modify.appendTo(nodes.get(((NodeModification) message).appendTo));
-        	}
-        	
-        	
-        } else if (message instanceof StartNodeModification) {
-        	System.out.println("StartNodeModification");
-        	
-        	start = nodes.get(((StartNodeModification) message).id);
-        	
-        }
-    }
+			}
+			if (((NodeModification) message).appendTo != null) {
+
+				System.out.println("Appending "
+						+ ((NodeModification) message).id + " to "
+						+ ((NodeModification) message).appendTo);
+
+				modify.appendTo(nodes
+						.get(((NodeModification) message).appendTo));
+			}
+
+		} else if (message instanceof StartNodeModification) {
+			System.out.println("StartNodeModification");
+
+			start = nodes.get(((StartNodeModification) message).id);
+
+		}
+	}
 }
