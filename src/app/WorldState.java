@@ -20,14 +20,17 @@ import app.eventsystem.CameraCreation;
 import app.eventsystem.Events;
 import app.eventsystem.NodeCreation;
 import app.eventsystem.NodeModification;
+import app.eventsystem.SimulateCreation;
 import app.eventsystem.StartNodeModification;
 import app.eventsystem.Target;
 import app.eventsystem.Types;
 import app.eventsystem.WorldEvents;
 import app.messages.KeyEvent;
 import app.messages.Message;
+import app.messages.Mode;
 import app.messages.RendererInitialization;
 import app.messages.RendererInitialized;
+import app.messages.SimulateType;
 import app.nodes.GroupNode;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
@@ -159,7 +162,7 @@ public class WorldState extends UntypedActor{
 			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) {
 				observer.tell(event, self());
 			}
-		}
+		} 	
 	}
 
 	protected void setCamera(Camera cam) {
@@ -238,5 +241,9 @@ public class WorldState extends UntypedActor{
         announce(n);
         
         return cube;
+	}
+	
+	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode){
+		simulator.tell(new SimulateCreation(object, keys, simulation, mode), getSelf());
 	}
 }
