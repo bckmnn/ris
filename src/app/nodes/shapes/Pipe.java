@@ -35,37 +35,35 @@ public class Pipe extends Shape {
 		this.r = r;
 		this.lats = lats;
 		this.longs = longs;
-		
+
 		mode = GL11.GL_QUAD_STRIP;
-		
+
 		setup();
 
 	}
-	
+
 	private void setup() {
 
 		Vector vec;
-		for (int i = 0; i <= lats; i++) {
-			float lat0 = (float) (Math.PI * (-0.5 + (i - 1) / lats));
-			float z0 = (float) Math.sin(lat0);
+		float lat0 = (float) (Math.PI * -1);
+		float z0 = (float) Math.sin(lat0);
 
-			float lat1 = (float) (Math.PI * (-0.5 + i / lats));
-			float z1 = (float) Math.sin(lat1);
+		float lat1 = (float) (Math.PI * -0.5);
+		float z1 = (float) Math.sin(lat1);
 
-			for (int j = 0; j <= longs; j++) {
-				float lng = (float) (2 * Math.PI * (j - 1) / longs);
-				float x = (float) Math.cos(lng);
-				float y = (float) Math.sin(lng);
+		for (int j = 0; j <= longs; j++) {
+			float lng = (float) (2 * Math.PI * (j - 1) / longs);
+			float x = (float) Math.cos(lng);
+			float y = (float) Math.sin(lng);
 
-				vec = vec(x, y, z0);
-				vec.normalize();
-				vL.add(new Vertex(vec, col((float) Math.random(),
-						(float) Math.random(), (float) Math.random())));
+			vec = vec(x, y, z0);
+			vec.normalize();
+			vL.add(new Vertex(vec, col((float) Math.random(),
+					(float) Math.random(), (float) Math.random())));
 
-				vec = vec(x, y, z1);
-				vec.normalize();
-				vL.add(v(vec, col(.4f, .8f, .3f)));
-			}
+			vec = vec(x, y, z1);
+			vec.normalize();
+			vL.add(v(vec, col(.4f, .8f, .3f)));
 		}
 
 		vertices = vL.toArray(new Vertex[vL.size()]);
@@ -83,6 +81,5 @@ public class Pipe extends Shape {
 		positionData.rewind();
 		colorData.rewind();
 	}
-
 
 }
