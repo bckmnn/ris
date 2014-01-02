@@ -11,6 +11,7 @@ import akka.actor.Props;
 import app.messages.Message;
 import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 
@@ -48,8 +49,8 @@ public class App extends WorldState {
 		transform(c2, vecmath.translationMatrix(1, 0, 0));
 		append(c2, head);
 
-		Cube c3 = createCube("Cube3", shader, .8f, 1.2f, 1);
-		transform(c3, vecmath.translationMatrix(-1, -1, 0));
+		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
+		transform(c3, vecmath.translationMatrix(-1.5f, 0, 0));
 		append(c3, head);
 
 	}

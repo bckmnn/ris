@@ -7,5 +7,7 @@ public class NodeCreation {
 	public Shader shader;
 	public Types type;
 	
-	public float w, h, d;
+	public float w, h, d, r;
+	
+	public int lats, longs;
 }

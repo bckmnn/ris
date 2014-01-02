@@ -32,6 +32,7 @@ import app.nodes.GroupNode;
 import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
+import app.nodes.shapes.Pipe;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
 import app.vecmath.Matrix;
@@ -235,5 +236,23 @@ public class WorldState extends UntypedActor{
         announce(n);
         
         return cube;
+	}
+	
+	protected Pipe createPipe(String id, Shader shader, float r, int lats, int longs) {
+		Pipe pipe = nodeFactory.pipe(id, shader, r, lats, longs);
+		nodes.put(id, pipe);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.PIPE;
+        n.shader = shader;
+        
+        n.r = r;
+        n.lats = lats;
+        n.longs = longs;
+        
+        announce(n);
+        
+        return pipe;
 	}
 }

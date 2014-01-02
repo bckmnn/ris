@@ -22,6 +22,7 @@ public abstract class Shape extends Node {
 	protected FloatBuffer textureData;
 	protected Texture tex;
 	protected Shader shader;
+	protected int mode = GL11.GL_QUADS;
 
 	public Shape(String id, Shader shader) {
 		super(id, FactoryDefault.vecmath.identityMatrix());
@@ -55,6 +56,6 @@ public abstract class Shape extends Node {
 		}
 
 		// Draw the triangles that form the cube from the vertex data arrays.
-		glDrawArrays(GL11.GL_QUADS, 0, vertices.length);
+		glDrawArrays(mode, 0, vertices.length);
 	}
 }

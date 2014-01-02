@@ -126,6 +126,13 @@ public class Renderer extends UntypedActor {
 						((NodeCreation) message).w, ((NodeCreation) message).h,
 						((NodeCreation) message).d);
 				nodes.put(newNode.id, newNode);
+			} else if (((NodeCreation) message).type == Types.PIPE) {
+				Node newNode = nodeFactory.pipe(((NodeCreation) message).id,
+						((NodeCreation) message).shader,
+						((NodeCreation) message).r,
+						((NodeCreation) message).lats,
+						((NodeCreation) message).longs);
+				nodes.put(newNode.id, newNode);
 			}
 
 		} else if (message instanceof CameraCreation) {
@@ -143,9 +150,10 @@ public class Renderer extends UntypedActor {
 			Node modify = nodes.get(((NodeModification) message).id);
 
 			if (((NodeModification) message).localMod != null) {
-//        		modify.setLocalTransform(((NodeModification) message).localMod);
-        		modify.updateWorldTransform(((NodeModification) message).localMod);
-//        		modify.setLocalTransform(modify.getWorldTransform());
+				// modify.setLocalTransform(((NodeModification)
+				// message).localMod);
+				modify.updateWorldTransform(((NodeModification) message).localMod);
+				// modify.setLocalTransform(modify.getWorldTransform());
 			}
 			if (((NodeModification) message).appendTo != null) {
 
