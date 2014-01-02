@@ -13,9 +13,9 @@ import static app.vecmathimp.FactoryDefault.vecmath;
 
 public class Cube extends Shape {
 	// Width, depth and height of the cube divided by 2.
-	private static float w2 = 0.5f;
-	private static float h2 = 0.5f;
-	private static float d2 = 0.5f;
+	private float w2 = 0.5f;
+	private float h2 = 0.5f;
+	private float d2 = 0.5f;
 
 	//
 	// 6 ------- 7
@@ -28,12 +28,12 @@ public class Cube extends Shape {
 	//
 
 	// The positions of the cube vertices.
-	private static Vector[] p = { vec(-w2, -h2, -d2), vec(w2, -h2, -d2),
+	private Vector[] p = { vec(-w2, -h2, -d2), vec(w2, -h2, -d2),
 			vec(w2, h2, -d2), vec(-w2, h2, -d2), vec(w2, -h2, d2),
 			vec(-w2, -h2, d2), vec(-w2, h2, d2), vec(w2, h2, d2) };
 
 	// The colors of the cube vertices.
-	private static Color[] c = { col(0, 0, 0), col(1, 0, 0), col(1, 1, 0),
+	private Color[] c = { col(0, 0, 0), col(1, 0, 0), col(1, 1, 0),
 			col(0, 1, 0), col(1, 0, 1), col(0, 0, 1), col(0, 1, 1),
 			col(1, 1, 1) };
 
@@ -45,7 +45,7 @@ public class Cube extends Shape {
 	// Vertices combine position and color information. Every four vertices
 	// define
 	// one side of the cube.
-	Vertex[] vertices = { // TODO: static?
+	Vertex[] vertices = {
 	// front
 			v(p[0], c[0]), v(p[1], c[1]), v(p[2], c[2]), v(p[3], c[3]),
 			// back
@@ -115,6 +115,12 @@ public class Cube extends Shape {
 	}
 
 	private void buffTex() {
+		textureData = BufferUtils.createFloatBuffer(vertices.length
+				* vecmath.vectorSize());
+		for (Vertex v : vertices) {
+			textureData.put(v.normal.asArray());
+		}
+		textureData.rewind();
 		setSuperVert();
 	}
 	

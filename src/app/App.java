@@ -49,9 +49,9 @@ public class App extends WorldState {
         transform(c2, vecmath.translationMatrix(1, 1, 0));
         append(c2, head);
         
-        Cube c3 = createCube("Cube3", new Shader(), 5, 5, 1);
-        transform(c3, vecmath.translationMatrix(0, 0, -1));
-        append(c3, c2);
+        Cube c3 = createCube("Cube3", shader, 16f, 16f, 1.0f);
+        transform(c3, vecmath.translationMatrix(0, 1, 0));
+        append(c3, head);
         
     }
 
