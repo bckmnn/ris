@@ -101,6 +101,12 @@ public class Renderer extends UntypedActor {
 		Display.update();
 
 		getSender().tell(Message.DONE, self());
+		
+		if(Display.isCloseRequested()){
+			Display.destroy();
+			context().system().shutdown();
+		}
+		
 	}
 
 	@Override
