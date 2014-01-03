@@ -3,7 +3,6 @@ package app.nodes.shapes;
 import static app.nodes.shapes.Vertex.*;
 import static app.vecmathimp.FactoryDefault.vecmath;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
