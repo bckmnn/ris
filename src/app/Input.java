@@ -27,24 +27,44 @@ public class Input extends UntypedActor {
     }
 
     private void run() {
-//    	pressedKeys.clear();
     	Set<Integer> pressedKeys = new HashSet<Integer>();
-//    	Set<Integer> releasedKeys = new HashSet<Integer>();
+    	Set<Integer> releasedKeys = new HashSet<Integer>();
     	
 		while (Keyboard.next()) {
 			int k = Keyboard.getEventKey();
 			if (Keyboard.getEventKeyState()) {
 				pressedKeys.add(k);
 			} 
-//			else {
-//				releasedKeys.add(k);
-//			}
+			else {
+				releasedKeys.add(k);
+			}
 		}
 		
-		SetMultimap<ActorRef, Integer> push = HashMultimap.create();
-		for(Integer i:pressedKeys)if(keyObservers.containsKey(i))for(ActorRef ar:keyObservers.get(i))push.put(ar, i);
-		
-		for(ActorRef send:push.keySet())send.tell(new KeyState(push.get(send)), self());
+		SetMultimap<ActorRef, Integer> pushPr = HashMultimap.create();
+		SetMultimap<ActorRef, Integer> pushRe = HashMultimap.create();
+		for(Integer i:pressedKeys){
+			if(keyObservers.containsKey(i)){
+				for(ActorRef ar:keyObservers.get(i)){
+					pushPr.put(ar, i);
+				}
+			}
+		}
+		for(Integer i:releasedKeys){
+			if(keyObservers.containsKey(i)){
+				for(ActorRef ar:keyObservers.get(i)){
+					pushRe.put(ar, i);
+				}
+			}
+		}
+		for(ActorRef send:pushPr.keySet()){
+			KeyState ks=new KeyState(pushPr.get(send), pushRe.get(send));
+			send.tell(ks, self());
+			pushRe.remove(send, pushRe.get(send));
+		}
+		for(ActorRef send:pushRe.keySet()){
+			KeyState ks=new KeyState(pushPr.get(send), pushRe.get(send));
+			send.tell(ks, self());
+		}
 		
         getSender().tell(Message.DONE, self());
     }

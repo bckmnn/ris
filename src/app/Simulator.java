@@ -8,52 +8,68 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 import akka.actor.UntypedActor;
 import app.eventsystem.CameraCreation;
 import app.eventsystem.NodeCreation;
 import app.eventsystem.NodeModification;
 import app.eventsystem.SimulateCreation;
-import app.eventsystem.StartNodeModification;
 import app.eventsystem.Types;
 import app.messages.KeyDef;
 import app.messages.KeyState;
 import app.messages.Message;
 import app.messages.Mode;
 import app.messages.SimulateType;
-import app.nodes.GroupNode;
 import app.nodes.Node;
-import app.nodes.camera.Camera;
+import app.toolkit.StopWatch;
+import app.vecmath.Matrix;
+import app.vecmathimp.MatrixImp;
 
 public class Simulator extends UntypedActor {
     
     private Map<String, Node> nodes = new HashMap<String, Node>();
     private Map<Node, KeyDef> simulations=new HashMap<Node, KeyDef>();
     private Set<Integer> pressedKeys = new HashSet<Integer>();
+    private Set<Integer> releasedKeys = new HashSet<Integer>();
+    private Map<Integer, Boolean> toggeled=new HashMap<Integer, Boolean>();
     
     private void initialize() {
         getSender().tell(Message.INITIALIZED, self());
     }
 
-    private void simulate() {
+    private void simulate() throws Exception {
     	for(Map.Entry<Node, KeyDef> entry:simulations.entrySet()){
-    		SimulateType type=entry.getValue().getType();
-    		if(entry.getValue().getMode()==Mode.DOWN){
-    			
-    		}
-    		if(type==SimulateType.ROTATE){
-    			
-    		}else if(type==SimulateType.TRANSLATE){
-    			
+    		Set<Integer> keys=entry.getValue().getKeys();
+    		if(keys.isEmpty()||keys==null){
+    			doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    		}else{
+    			if(entry.getValue().getMode()==Mode.DOWN){
+    				boolean contains=false;
+    				for(Integer i:keys)if(pressedKeys.contains(i))contains=true;
+    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    			}else if(entry.getValue().getMode()==Mode.TOGGLE){
+    				boolean contains=false;
+    				for(Integer i:keys)if(toggeled.containsKey(i))if(toggeled.get(i))contains=true;
+    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    			}else{
+    				throw new Exception("Add Key Mode!");
+    			}
     		}
     	}
                 
         getSender().tell(Message.DONE, self());
     }
     
-    private void rotate(){
+    private void doSimulation(Node node, SimulateType type, Matrix modelMatrix){
+    	StopWatch sw=new StopWatch();
+    	if(type==SimulateType.ROTATE){
+    		//TODO: Rotate simulation
+    		float angle = 0;
+    		angle += 90 * sw.elapsed();
+    		node.updateWorldTransform(MatrixImp.rotate(modelMatrix.getPosition(), angle));
+			angle = 0;
+			getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
+    	}
+    	
     	//st end nodemodification
     }
     
@@ -65,7 +81,15 @@ public class Simulator extends UntypedActor {
             initialize();
         } else if(message instanceof KeyState){
         	pressedKeys.clear();
+        	releasedKeys.clear();
         	pressedKeys.addAll(((KeyState)message).getPressedKeys());
+        	releasedKeys.addAll(((KeyState)message).getReleasedKeys());
+        	for(Integer i:pressedKeys){
+        		toggeled.put(i, false);
+        	}
+        	for(Integer ik:releasedKeys){
+        		toggeled.put(ik, true);
+        	}
         }
         
 //        else if (message instanceof NodeCreation) {

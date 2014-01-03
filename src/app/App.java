@@ -37,6 +37,9 @@ public class App extends WorldState {
 	@Override
 	protected void initialize() {
 
+		/**
+		 * Note: After Creation add keys and physic before transform.
+		 */
 		setCamera(nodeFactory.camera("Cam"));
 		transform(camera, FactoryDefault.vecmath.translationMatrix(0, 0, 3));
 
@@ -59,6 +62,7 @@ public class App extends WorldState {
 		
 		Sphere c4 = createSphere("Shpere!", shader);
 		transform(c4, vecmath.translationMatrix(-1f, 1f, 0));
+		
 		append(c4, head);
 		
 		Plane floor = createPlane("Floor", shader, 20, 20);
