@@ -50,6 +50,7 @@ public class App extends WorldState {
 
 		Cube c1 = createCube("Cube1", shader, 0.3f, 0.3f, 0.3f);
 		append(c1, head);
+		transform(c1, vecmath.translationMatrix(-1.5f, -1, 0));
 		addPhysic(c1, new VectorImp(6,6,6));
 
 		Cube c2 = createCube("Cube2", shader, 1.5f, 1.5f, 1.5f);
@@ -57,7 +58,7 @@ public class App extends WorldState {
 		append(c2, head);
 
 		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
-		transform(c3, vecmath.translationMatrix(-1.5f, -1, 0));
+//		transform(c3, vecmath.translationMatrix(-1.5f, -1, 0));
 		append(c3, head);
 		
 		Sphere c4 = createSphere("Shpere!", shader);

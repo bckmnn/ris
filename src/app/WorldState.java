@@ -315,13 +315,20 @@ public class WorldState extends UntypedActor{
 	
 	protected void addPhysic(Cube cube, Vector velocity){
 		
+				
 		NodeCreation n = new NodeCreation();
+		n.modelmatrix = (nodes.get(cube.id).getWorldTransform());
 		n.id = cube.id;
 		n.type = Types.CUBE;
 		n.shader = cube.getShader();
 		n.velocity = velocity;
 		
 		physic.tell(n, self());
+//		SimulateCreation sc=(SimulateCreation)n; TODO: wieso geht das nicht?
+//		sc.setSimulation(SimulateType.PHYSIC);
+		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.PHYSIC, null);
+		sc.modelmatrix = n.modelmatrix;
+		simulator.tell(sc,self());
 			
 	}
 	
