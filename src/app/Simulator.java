@@ -171,6 +171,8 @@ public class Simulator extends UntypedActor {
         	if(sc.getSimulation()!=SimulateType.NONE){
         		System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaalllllllllllllllllllooooooooo\n"+newNode.id+sc.getSimulation()+"\n"+"local\n"+newNode.getLocalTransform()+"world\n"+newNode.getWorldTransform()+"keys"+sc.getKeys());
         		simulations.put(newNode, new KeyDef(sc.getSimulation(), sc.getKeys(), sc.getMode(), sc.getVector()));
+        		newNode.setLocalTransform(sc.modelmatrix);
+        		newNode.updateWorldTransform(); //TODO: Node klasse fixen.... was geht denn hier
         		System.out.println("simulations\n"+simulations.get(newNode).getVector()+"\n"+simulations.isEmpty()+sc.getSimulation());
         		
         	}else{

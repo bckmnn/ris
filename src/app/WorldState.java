@@ -167,8 +167,8 @@ public class WorldState extends UntypedActor{
 			}
 		} else if (event instanceof NodeModification/* || event instanceof StartNodeModification*/) {
 			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) { //TODO: startnodemodification fehlt?
-				System.out.println("announce:"+getSender()+"message"+event.toString());
-				if(!observer.equals(getSender()))observer.tell(event, self());
+//				System.out.println("announce:"+getSender()+"message"+event.toString());
+				/*if(!observer.equals(getSender()))*/observer.tell(event, self()); //TODO: getSender überprüfen
 			}
 		} 	
 	}
@@ -330,6 +330,7 @@ public class WorldState extends UntypedActor{
 	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode, Vector vec, Types type){ //TODO:better solution for type
 		SimulateCreation sc=new SimulateCreation(object.id, keys, simulation, mode, vec);
 		sc.type=type;
+		sc.modelmatrix=object.getWorldTransform();
 		simulator.tell(sc, getSelf());
 		if(!(keys==null||keys.isEmpty())){
 			if(simulation!=SimulateType.NONE) input.tell(new RegisterKeys(keys, true), simulator);
