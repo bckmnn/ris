@@ -28,6 +28,7 @@ import app.eventsystem.WorldEvents;
 import app.messages.KeyEvent;
 import app.messages.Message;
 import app.messages.Mode;
+import app.messages.PhysicInitialization;
 import app.messages.RendererInitialization;
 import app.messages.RendererInitialized;
 import app.messages.SimulateType;
@@ -40,6 +41,7 @@ import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
 import app.vecmath.Matrix;
+import app.vecmath.Vector;
 
 /**
  * Technical base
@@ -132,7 +134,7 @@ public class WorldState extends UntypedActor{
 
 			renderer.tell(new RendererInitialization(0), self());
 			simulator.tell(Message.INIT, self());
-			physic.tell(Message.INIT, self());
+			physic.tell(new PhysicInitialization(simulator), self());
 		} else if (message instanceof RendererInitialized) {
 			shader = ((RendererInitialized) message).shader;
 			
@@ -289,8 +291,19 @@ public class WorldState extends UntypedActor{
 		n.shader = cube.getShader();
 		
 		physic.tell(n, self());
+			
+	}
 	
+	protected void addPhysic(Cube cube, Vector velocity){
 		
+		NodeCreation n = new NodeCreation();
+		n.id = cube.id;
+		n.type = Types.CUBE;
+		n.shader = cube.getShader();
+		n.velocity = velocity;
+		
+		physic.tell(n, self());
+			
 	}
 	
 	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode){

@@ -15,6 +15,7 @@ import app.nodes.shapes.Pipe;
 import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
+import app.vecmathimp.VectorImp;
 
 /**
  * Put your stuff here
@@ -45,7 +46,7 @@ public class App extends WorldState {
 
 		Cube c1 = createCube("Cube1", shader, 0.3f, 0.3f, 0.3f);
 		append(c1, head);
-		addPhysic(c1);
+		addPhysic(c1, new VectorImp(6,6,6));
 
 		Cube c2 = createCube("Cube2", shader, 1.5f, 1.5f, 1.5f);
 		transform(c2, vecmath.translationMatrix(1, 0, 0));
