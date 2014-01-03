@@ -6,6 +6,7 @@ import java.util.Map;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Plane;
 import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.vecmath.Matrix;
@@ -63,5 +64,10 @@ public class NodeFactory {
 	public Sphere sphere(String id, Shader shader) {
 		Sphere s = new Sphere(id, shader);
 		return s;
+	}
+	
+	public Plane plane(String id, Shader shader, float width, float depth) {
+		Plane p = new Plane(id, shader, width, depth);
+		return p;
 	}
 }

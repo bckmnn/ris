@@ -12,6 +12,7 @@ import app.messages.Message;
 import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Plane;
 import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
@@ -59,6 +60,10 @@ public class App extends WorldState {
 		Sphere c4 = createSphere("Shpere!", shader);
 		transform(c4, vecmath.translationMatrix(-1f, 1f, 0));
 		append(c4, head);
+		
+		Plane floor = createPlane("Floor", shader, 20, 20);
+		transform(floor, vecmath.translationMatrix(0, -2f, 0));
+		append(floor, head);
 
 	}
 

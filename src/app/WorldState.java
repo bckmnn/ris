@@ -37,6 +37,7 @@ import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Plane;
 import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
@@ -281,6 +282,23 @@ public class WorldState extends UntypedActor{
         announce(n);
         
         return sphere;
+	}
+	
+	protected Plane createPlane(String id, Shader shader, float width, float depth) {
+		Plane plane = nodeFactory.plane(id, shader, width, depth);
+		nodes.put(id, plane);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.PLANE;
+        n.shader = shader;
+        
+        n.w = width;
+        n.d = depth;
+        
+        announce(n);
+        
+        return plane;
 	}
 
 	protected void addPhysic(Cube cube){
