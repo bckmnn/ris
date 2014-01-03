@@ -33,11 +33,11 @@ public class Physic extends UntypedActor {
 		for (Node n : nodes.values()) {
 			if (collisionGround(n) == false || collisionObjects(n) == false) {
 				// for(Node n: nodes.values()){
-				System.out.println("Matrix NodePhysic: " + n.getWorldTransform().toString());
-				System.out.println("funkt das???" + n.id);
-				System.out.println("alte velo:" + n.getVelocity());
+//				System.out.println("Matrix NodePhysic: " + n.getWorldTransform().toString());
+//				System.out.println("funkt das???" + n.id);
+//				System.out.println("alte velo:" + n.getVelocity());
 				n.setVelocity(n.getVelocity().sub(new VectorImp(0, 2*zeit.elapsed(), 0)));
-				System.out.println("neue velo:" + n.getVelocity());
+//				System.out.println("neue velo:" + n.getVelocity());
 				PhysicModification p = new PhysicModification();
 				p.velocity = n.getVelocity();
 				simulator.tell(p, self());
@@ -71,7 +71,7 @@ public class Physic extends UntypedActor {
 			this.simulator = (((PhysicInitialization) message).simulator);
 			initialize();
 		} else if (message instanceof NodeCreation) {
-			System.out.println("PHHHHHYYYYYYYYYYYYYYYYYYYSSSSSSSSIIIIIICCC");
+//			System.out.println("PHHHHHYYYYYYYYYYYYYYYYYYYSSSSSSSSIIIIIICCC");
 
 			if (((NodeCreation) message).type == Types.GROUP) {
 				Node newNode = nodeFactory
@@ -79,8 +79,8 @@ public class Physic extends UntypedActor {
 				nodes.put(newNode.id, newNode);
 			} else if (((NodeCreation) message).type == Types.CUBE) {
 
-				System.out.println("Shadering cube with "
-						+ ((NodeCreation) message).shader);
+//				System.out.println("Shadering cube with "
+//						+ ((NodeCreation) message).shader);
 
 				Node newNode = nodeFactory.cube(((NodeCreation) message).id,
 						((NodeCreation) message).shader,
@@ -95,11 +95,11 @@ public class Physic extends UntypedActor {
 				nodes.put(newNode.id, newNode);
 			} else if (message instanceof NodeModification) {
 				if (nodes.containsKey(((NodeModification) message).id)) {
-					System.out.println("NodeModification");
+//					System.out.println("NodeModification");
 
-					System.out.println("Nodes " + nodes);
-					System.out.println("Accesing "
-							+ ((NodeModification) message).id);
+//					System.out.println("Nodes " + nodes);
+//					System.out.println("Accesing "
+//							+ ((NodeModification) message).id);
 
 					Node modify = nodes.get(((NodeModification) message).id);
 
@@ -111,9 +111,9 @@ public class Physic extends UntypedActor {
 					}
 					if (((NodeModification) message).appendTo != null) {
 
-						System.out.println("Appending "
-								+ ((NodeModification) message).id + " to "
-								+ ((NodeModification) message).appendTo);
+//						System.out.println("Appending "
+//								+ ((NodeModification) message).id + " to "
+//								+ ((NodeModification) message).appendTo);
 
 						modify.appendTo(nodes
 								.get(((NodeModification) message).appendTo));
