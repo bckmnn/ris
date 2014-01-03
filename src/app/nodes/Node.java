@@ -52,7 +52,8 @@ public abstract class Node {
     }
 
     public void updateWorldTransform(Matrix previousTrafo) {
-        worldTrafo = previousTrafo.mult(getWorldTransform());
+//        worldTrafo = previousTrafo.mult(getWorldTransform());
+        worldTrafo = getWorldTransform().mult(previousTrafo);
     }
 
     public void updateWorldTransform() {

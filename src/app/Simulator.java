@@ -2,7 +2,6 @@ package app;
 
 
 import static app.nodes.NodeFactory.nodeFactory;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -72,6 +71,11 @@ public class Simulator extends UntypedActor {
     		System.out.println("simualtor"+node.getWorldTransform());
 			angle = 0;
 			getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
+    	}
+    	else if(type==SimulateType.TRANSLATE){
+    		node.updateWorldTransform(MatrixImp.translate(vec));
+    		System.out.println("roiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiggggggggggggghhhhhhhhhht"+node.getWorldTransform());
+    		getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
     	}
     	
     	//st end nodemodification
