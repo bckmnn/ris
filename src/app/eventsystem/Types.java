@@ -4,6 +4,7 @@ public enum Types {
 	GROUP,
 	CUBE,
 	PIPE,
+	SPHERE,
+	PLANE,
 	CAMERA
-
 }

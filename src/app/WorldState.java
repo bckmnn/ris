@@ -29,6 +29,7 @@ import app.messages.KeyEvent;
 import app.messages.Message;
 import app.messages.Mode;
 import app.messages.RegisterKeys;
+import app.messages.PhysicInitialization;
 import app.messages.RendererInitialization;
 import app.messages.RendererInitialized;
 import app.messages.SimulateType;
@@ -37,9 +38,12 @@ import app.nodes.Node;
 import app.nodes.camera.Camera;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
+import app.nodes.shapes.Plane;
+import app.nodes.shapes.Sphere;
 import app.shader.Shader;
 import app.toolkit.StopWatch;
 import app.vecmath.Matrix;
+import app.vecmath.Vector;
 
 /**
  * Technical base
@@ -132,7 +136,7 @@ public class WorldState extends UntypedActor{
 
 			renderer.tell(new RendererInitialization(0), self());
 			simulator.tell(Message.INIT, self());
-			physic.tell(Message.INIT, self());
+			physic.tell(new PhysicInitialization(simulator), self());
 		} else if (message instanceof RendererInitialized) {
 			shader = ((RendererInitialized) message).shader;
 			
@@ -266,6 +270,37 @@ public class WorldState extends UntypedActor{
         
         return pipe;
 	}
+	
+	protected Sphere createSphere(String id, Shader shader) {
+		Sphere sphere = nodeFactory.sphere(id, shader);
+		nodes.put(id, sphere);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.SPHERE;
+        n.shader = shader;
+        
+        announce(n);
+        
+        return sphere;
+	}
+	
+	protected Plane createPlane(String id, Shader shader, float width, float depth) {
+		Plane plane = nodeFactory.plane(id, shader, width, depth);
+		nodes.put(id, plane);
+		
+		NodeCreation n = new NodeCreation();
+        n.id = id;
+        n.type = Types.PLANE;
+        n.shader = shader;
+        
+        n.w = width;
+        n.d = depth;
+        
+        announce(n);
+        
+        return plane;
+	}
 
 	protected void addPhysic(Cube cube){
 		
@@ -275,8 +310,19 @@ public class WorldState extends UntypedActor{
 		n.shader = cube.getShader();
 		
 		physic.tell(n, self());
+			
+	}
 	
+	protected void addPhysic(Cube cube, Vector velocity){
 		
+		NodeCreation n = new NodeCreation();
+		n.id = cube.id;
+		n.type = Types.CUBE;
+		n.shader = cube.getShader();
+		n.velocity = velocity;
+		
+		physic.tell(n, self());
+			
 	}
 	
 	protected void simulateOnKey(String objectId, Set<Integer> keys, SimulateType simulation, Mode mode){
