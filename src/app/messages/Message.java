@@ -5,5 +5,6 @@ public enum Message {
     DONE,
     LOOP,
     INITIALIZED,
-    RENDERER_INITIALIZED, DISPLAY,
+    RENDERER_INITIALIZED, 
+    DISPLAY,
 }

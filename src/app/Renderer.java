@@ -36,7 +36,7 @@ public class Renderer extends UntypedActor {
 	private static final int width = 640;
 	private static final int height = 480;
 
-	private boolean multisampling = true;
+	private boolean multisampling = false;
 
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
@@ -101,6 +101,12 @@ public class Renderer extends UntypedActor {
 		Display.update();
 
 		getSender().tell(Message.DONE, self());
+
+		if (Display.isCloseRequested()) {
+			Display.destroy();
+			context().system().shutdown();
+		}
+
 	}
 
 	@Override
@@ -132,6 +138,15 @@ public class Renderer extends UntypedActor {
 						((NodeCreation) message).r,
 						((NodeCreation) message).lats,
 						((NodeCreation) message).longs);
+				nodes.put(newNode.id, newNode);
+			} else if (((NodeCreation) message).type == Types.SPHERE) {
+				Node newNode = nodeFactory.sphere(((NodeCreation) message).id,
+						((NodeCreation) message).shader);
+				nodes.put(newNode.id, newNode);
+			} else if (((NodeCreation) message).type == Types.PLANE) {
+				Node newNode = nodeFactory.plane(((NodeCreation) message).id,
+						((NodeCreation) message).shader,
+						((NodeCreation) message).w, ((NodeCreation) message).d);
 				nodes.put(newNode.id, newNode);
 			}
 
