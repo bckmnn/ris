@@ -6,15 +6,20 @@ import java.util.Set;
 /**
  * State passed from target to observer containing all relevant released and pressed keys.
  * 
- * @author Constantin
+ * @author Constantin, Benjamin Reemts
  * 
  */
 public class KeyState implements State {
-	public Set<Integer> pressedKeys;
-	public Set<Integer> releasedKeys;
+	private Set<Integer> pressedKeys;
 	
 	public KeyState() {
 		pressedKeys = new HashSet<Integer>();
-		releasedKeys = new HashSet<Integer>();
+	}
+	public KeyState(Set<Integer> pressedKeys) {
+		this.pressedKeys = pressedKeys;
+	}
+
+	public Set<Integer> getPressedKeys() {
+		return pressedKeys;
 	}
 }

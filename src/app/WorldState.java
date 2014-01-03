@@ -28,6 +28,7 @@ import app.eventsystem.WorldEvents;
 import app.messages.KeyEvent;
 import app.messages.Message;
 import app.messages.Mode;
+import app.messages.RegisterKeys;
 import app.messages.RendererInitialization;
 import app.messages.RendererInitialized;
 import app.messages.SimulateType;
@@ -122,7 +123,7 @@ public class WorldState extends UntypedActor{
 			unitState.put(physic, false);
 			
 			observers.put(Events.NODE_CREATION, renderer);
-			observers.put(Events.NODE_CREATION, simulator);
+//			observers.put(Events.NODE_CREATION, simulator); done by simulateonkey, only need for modification
 			observers.put(Events.NODE_MODIFICATION, renderer);
 			observers.put(Events.NODE_MODIFICATION, simulator);
 			observers.put(Events.NODE_MODIFICATION, physic);
@@ -278,7 +279,9 @@ public class WorldState extends UntypedActor{
 		
 	}
 	
-	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode){
-		simulator.tell(new SimulateCreation(object, keys, simulation, mode), getSelf());
+	protected void simulateOnKey(String objectId, Set<Integer> keys, SimulateType simulation, Mode mode){
+		simulator.tell(new SimulateCreation(objectId, keys, simulation, mode), getSelf());
+		if(simulation!=SimulateType.NONE) input.tell(new RegisterKeys(keys, true), simulator);
+		else input.tell(new RegisterKeys(keys, false), simulator);
 	}
 }
