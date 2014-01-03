@@ -33,6 +33,7 @@ public class Physic extends UntypedActor {
 		for (Node n : nodes.values()) {
 			if (collisionGround(n) == false || collisionObjects(n) == false) {
 				// for(Node n: nodes.values()){
+				System.out.println("Matrix NodePhysic: " + n.getWorldTransform().toString());
 				System.out.println("funkt das???" + n.id);
 				System.out.println("alte velo:" + n.getVelocity());
 				n.setVelocity(n.getVelocity().sub(new VectorImp(0, 2*zeit.elapsed(), 0)));
@@ -87,6 +88,9 @@ public class Physic extends UntypedActor {
 						((NodeCreation) message).d);
 				if ((((NodeCreation) message).velocity != null)) {
 					newNode.setVelocity(((NodeCreation) message).velocity);
+				}
+				if ((((NodeCreation) message).modelmatrix != null)) {
+					newNode.updateWorldTransform(((NodeCreation) message).modelmatrix);
 				}
 				nodes.put(newNode.id, newNode);
 			} else if (message instanceof NodeModification) {
