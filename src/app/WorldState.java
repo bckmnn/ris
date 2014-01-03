@@ -322,6 +322,10 @@ public class WorldState extends UntypedActor{
 		n.velocity = velocity;
 		
 		physic.tell(n, self());
+//		SimulateCreation sc=(SimulateCreation)n; TODO: wieso geht das nicht?
+//		sc.setSimulation(SimulateType.PHYSIC);
+		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.PHYSIC, null);
+		simulator.tell(sc,self());
 			
 	}
 	

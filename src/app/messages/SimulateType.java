@@ -1,5 +1,5 @@
 package app.messages;
 
 public enum SimulateType {
-	NONE, ROTATE, TRANSLATE
+	NONE, ROTATE, TRANSLATE, PHYSIC
 }
