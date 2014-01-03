@@ -3,9 +3,6 @@ package app;
 import static app.nodes.NodeFactory.nodeFactory;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +19,7 @@ import app.eventsystem.NodeCreation;
 import app.eventsystem.NodeModification;
 import app.eventsystem.SimulateCreation;
 import app.eventsystem.StartNodeModification;
-import app.eventsystem.Target;
 import app.eventsystem.Types;
-import app.eventsystem.WorldEvents;
-import app.messages.KeyEvent;
 import app.messages.Message;
 import app.messages.Mode;
 import app.messages.RegisterKeys;
@@ -326,15 +320,19 @@ public class WorldState extends UntypedActor{
 		physic.tell(n, self());
 //		SimulateCreation sc=(SimulateCreation)n; TODO: wieso geht das nicht?
 //		sc.setSimulation(SimulateType.PHYSIC);
-		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.PHYSIC, null);
+		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.PHYSIC, null, null);
 		sc.modelmatrix = n.modelmatrix;
 		simulator.tell(sc,self());
 			
 	}
 	
-	protected void simulateOnKey(String objectId, Set<Integer> keys, SimulateType simulation, Mode mode){
-		simulator.tell(new SimulateCreation(objectId, keys, simulation, mode), getSelf());
-		if(simulation!=SimulateType.NONE) input.tell(new RegisterKeys(keys, true), simulator);
-		else input.tell(new RegisterKeys(keys, false), simulator);
+	protected void simulateOnKey(Node object, Set<Integer> keys, SimulateType simulation, Mode mode, Vector vec, Types type){ //TODO:better solution for type
+		SimulateCreation sc=new SimulateCreation(object.id, keys, simulation, mode, vec);
+		sc.type=type;
+		simulator.tell(sc, getSelf());
+		if(!(keys==null||keys.isEmpty())){
+			if(simulation!=SimulateType.NONE) input.tell(new RegisterKeys(keys, true), simulator);
+			else input.tell(new RegisterKeys(keys, false), simulator);
+		}
 	}
 }

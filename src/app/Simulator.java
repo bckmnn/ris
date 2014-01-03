@@ -21,7 +21,7 @@ import app.messages.Mode;
 import app.messages.SimulateType;
 import app.nodes.Node;
 import app.toolkit.StopWatch;
-import app.vecmath.Matrix;
+import app.vecmath.Vector;
 import app.vecmathimp.MatrixImp;
 
 public class Simulator extends UntypedActor {
@@ -30,7 +30,7 @@ public class Simulator extends UntypedActor {
     private Map<Node, KeyDef> simulations=new HashMap<Node, KeyDef>();
     private Set<Integer> pressedKeys = new HashSet<Integer>();
     private Set<Integer> releasedKeys = new HashSet<Integer>();
-    private Map<Integer, Boolean> toggeled=new HashMap<Integer, Boolean>();
+    private Set<Integer> toggeled=new HashSet<Integer>();
     
     private void initialize() {
         getSender().tell(Message.INITIALIZED, self());
@@ -39,17 +39,17 @@ public class Simulator extends UntypedActor {
     private void simulate() throws Exception {
     	for(Map.Entry<Node, KeyDef> entry:simulations.entrySet()){
     		Set<Integer> keys=entry.getValue().getKeys();
-    		if(keys.isEmpty()||keys==null){
-    			doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    		if(keys==null||keys.isEmpty()){
+    			doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getVector());
     		}else{
     			if(entry.getValue().getMode()==Mode.DOWN){
     				boolean contains=false;
     				for(Integer i:keys)if(pressedKeys.contains(i))contains=true;
-    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getVector());
     			}else if(entry.getValue().getMode()==Mode.TOGGLE){
     				boolean contains=false;
-    				for(Integer i:keys)if(toggeled.containsKey(i))if(toggeled.get(i))contains=true;
-    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getModelMatrix());
+    				for(Integer i:keys)if(toggeled.contains(i))contains=true;
+    				if(contains)doSimulation(entry.getKey(), entry.getValue().getType(), entry.getValue().getVector());
     			}else{
     				throw new Exception("Add Key Mode!");
     			}
@@ -59,13 +59,17 @@ public class Simulator extends UntypedActor {
         getSender().tell(Message.DONE, self());
     }
     
-    private void doSimulation(Node node, SimulateType type, Matrix modelMatrix){
+    private void doSimulation(Node node, SimulateType type, Vector vec){
     	StopWatch sw=new StopWatch();
+    	System.out.println("in?");
     	if(type==SimulateType.ROTATE){
     		//TODO: Rotate simulation
     		float angle = 0;
-    		angle += 90 * sw.elapsed();
-    		node.updateWorldTransform(MatrixImp.rotate(modelMatrix.getPosition(), angle));
+    		angle += 0.00000000000000001 * sw.elapsed();
+//    		System.out.println("maaaaaaaaaaatttttttttttttrrrrrrrrrrrriiiiiiiixxxxxx\n"+MatrixImp.rotate(vec, angle));
+    		System.out.println("sdaföhekfhnwaknefökanovjwejnlfnaöjvbiew\n"+node.getWorldTransform());
+    		node.updateWorldTransform(MatrixImp.rotate(vec, angle));
+    		System.out.println("simualtor"+node.getWorldTransform());
 			angle = 0;
 			getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
     	}
@@ -84,11 +88,9 @@ public class Simulator extends UntypedActor {
         	releasedKeys.clear();
         	pressedKeys.addAll(((KeyState)message).getPressedKeys());
         	releasedKeys.addAll(((KeyState)message).getReleasedKeys());
-        	for(Integer i:pressedKeys){
-        		toggeled.put(i, false);
-        	}
         	for(Integer ik:releasedKeys){
-        		toggeled.put(ik, true);
+        		if(toggeled.contains(ik))toggeled.remove(ik);
+        		else toggeled.add(ik);
         	}
         }
         
@@ -120,22 +122,22 @@ public class Simulator extends UntypedActor {
         	
         	System.out.println("Nodes " + nodes);
         	System.out.println("Accesing " + ((NodeModification) message).id);
-        	
         	if(nodes.containsKey(((NodeModification) message).id)){
         		Node modify = nodes.get(((NodeModification) message).id);
+        		System.out.println("haaaooooooooooooooooooooooooooooooooooooooooo\n"+modify.id+"\n"+"local\n"+modify.getLocalTransform()+"world\n"+modify.getWorldTransform());
         		if (((NodeModification) message).localMod != null) {
         			modify.updateWorldTransform(((NodeModification) message).localMod);
 //        		modify.setLocalTransform(modify.getWorldTransform());
+        			System.out.println("haaaooooooooooooooooooooooooooooooooooooooooo\n"+modify.id+"\n"+"local\n"+modify.getLocalTransform()+"world\n"+modify.getWorldTransform());
         		}
-        		if (((NodeModification) message).appendTo != null) {
-        			
-        			System.out.println("Appending " + ((NodeModification) message).id + " to " + ((NodeModification) message).appendTo);
-        			
-        			
-        			modify.appendTo(nodes.get(((NodeModification) message).appendTo));
-        		}
+//        		if (((NodeModification) message).appendTo != null) {
+//        			
+//        			System.out.println("Appending " + ((NodeModification) message).id + " to " + ((NodeModification) message).appendTo);
+//        			
+//        			
+//        			modify.appendTo(nodes.get(((NodeModification) message).appendTo));
+//        		}//cause error on run, delets simulations
         	}
-        		
         } 
 //        else if (message instanceof StartNodeModification) {
 //        	System.out.println("StartNodeModification");
@@ -163,7 +165,10 @@ public class Simulator extends UntypedActor {
         		throw new Exception("Please implement Type");
         	}
         	if(sc.getSimulation()!=SimulateType.NONE){
-        		simulations.put(newNode, new KeyDef(sc.getSimulation(), sc.getKeys(), sc.getMode()));
+        		System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaalllllllllllllllllllooooooooo\n"+newNode.id+sc.getSimulation()+"\n"+"local\n"+newNode.getLocalTransform()+"world\n"+newNode.getWorldTransform()+"keys"+sc.getKeys());
+        		simulations.put(newNode, new KeyDef(sc.getSimulation(), sc.getKeys(), sc.getMode(), sc.getVector()));
+        		System.out.println("simulations\n"+simulations.get(newNode).getVector()+"\n"+simulations.isEmpty()+sc.getSimulation());
+        		
         	}else{
         		simulations.remove(newNode);
         	}

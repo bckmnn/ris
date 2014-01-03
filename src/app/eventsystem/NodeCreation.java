@@ -16,4 +16,10 @@ public class NodeCreation {
 	public float w, h, d, r;
 	
 	public int lats, longs;
+
+	public Matrix getModelmatrix() {
+		return modelmatrix;
+	}
+	
+	
 }

@@ -2,7 +2,7 @@ package app.messages;
 
 import java.util.Set;
 
-import app.vecmath.Matrix;
+import app.vecmath.Vector;
 
 /**
  * @author Benjamin Reemts
@@ -13,7 +13,7 @@ public class KeyDef {
 	private SimulateType type;
 	private Set<Integer> keys;
 	private Mode mode;
-	private Matrix modelMatrix;
+	private Vector vector;
 	
 
 	public KeyDef(SimulateType type, Set<Integer> keys, Mode mode){
@@ -22,11 +22,11 @@ public class KeyDef {
 		this.mode=mode;
 	}
 	
-	public KeyDef(SimulateType type, Set<Integer> keys, Mode mode, Matrix modelMatrix){
+	public KeyDef(SimulateType type, Set<Integer> keys, Mode mode, Vector vec){
 		this.type=type;
 		this.keys=keys;
 		this.mode=mode;
-		this.modelMatrix=modelMatrix;
+		this.vector=vec;
 	}
 
 
@@ -44,12 +44,12 @@ public class KeyDef {
 		return mode;
 	}
 
-	public Matrix getModelMatrix() {
-		return modelMatrix;
+	public Vector getVector() {
+		return vector;
 	}
 
-	public void setModelMatrix(Matrix modelMatrix) {
-		this.modelMatrix = modelMatrix;
+	public void setVector(Vector vec) {
+		this.vector = vec;
 	}
 	
 }

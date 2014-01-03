@@ -3,18 +3,23 @@ package app;
 import static app.vecmathimp.FactoryDefault.vecmath;
 import static app.nodes.NodeFactory.nodeFactory;
 
-import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+
+import org.lwjgl.input.Keyboard;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import app.eventsystem.Types;
 import app.messages.Message;
+import app.messages.Mode;
+import app.messages.SimulateType;
 import app.nodes.GroupNode;
 import app.nodes.shapes.Cube;
 import app.nodes.shapes.Pipe;
 import app.nodes.shapes.Plane;
 import app.nodes.shapes.Sphere;
-import app.shader.Shader;
 import app.vecmathimp.FactoryDefault;
 import app.vecmathimp.VectorImp;
 
@@ -51,10 +56,11 @@ public class App extends WorldState {
 		Cube c1 = createCube("Cube1", shader, 0.3f, 0.3f, 0.3f);
 		append(c1, head);
 		transform(c1, vecmath.translationMatrix(-1.5f, -1, 0));
-		addPhysic(c1, new VectorImp(6,6,6));
+//		addPhysic(c1, new VectorImp(6,6,6));
 
 		Cube c2 = createCube("Cube2", shader, 1.5f, 1.5f, 1.5f);
-		transform(c2, vecmath.translationMatrix(1, 0, 0));
+		simulateOnKey(c2, new HashSet<Integer>(Arrays.asList(Keyboard.KEY_R)), SimulateType.ROTATE, Mode.TOGGLE, new VectorImp(0, 1, 0) ,Types.CUBE);
+//		transform(c2, vecmath.translationMatrix(1, 0, 0));
 		append(c2, head);
 
 		Pipe c3 = createPipe("Pipe!", shader, 0, 1, 30);
