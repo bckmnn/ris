@@ -165,8 +165,8 @@ public class WorldState extends UntypedActor{
 			for (ActorRef observer : observers.get(Events.NODE_CREATION)) {
 				observer.tell(event, self());
 			}
-		} else if (event instanceof NodeModification/* || event instanceof StartNodeModification*/) {
-			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) { //TODO: startnodemodification fehlt?
+		} else if (event instanceof NodeModification || event instanceof StartNodeModification) {
+			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) { 
 //				System.out.println("announce:"+getSender()+"message"+event.toString());
 				/*if(!observer.equals(getSender()))*/observer.tell(event, self()); //TODO: getSender überprüfen
 			}
