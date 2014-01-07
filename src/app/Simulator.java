@@ -2,6 +2,7 @@ package app;
 
 
 import static app.nodes.NodeFactory.nodeFactory;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,6 +12,7 @@ import akka.actor.UntypedActor;
 import app.eventsystem.CameraCreation;
 import app.eventsystem.NodeCreation;
 import app.eventsystem.NodeModification;
+import app.eventsystem.PhysicModification;
 import app.eventsystem.SimulateCreation;
 import app.eventsystem.Types;
 import app.messages.KeyDef;
@@ -30,6 +32,7 @@ public class Simulator extends UntypedActor {
     private Set<Integer> pressedKeys = new HashSet<Integer>();
     private Set<Integer> releasedKeys = new HashSet<Integer>();
     private Set<Integer> toggeled=new HashSet<Integer>();
+	private float angle = 0;
     
     private void initialize() {
         getSender().tell(Message.INITIALIZED, self());
@@ -63,13 +66,16 @@ public class Simulator extends UntypedActor {
     	System.out.println("in?");
     	if(type==SimulateType.ROTATE){
     		//TODO: Rotate simulation
-    		float angle = 0;
-    		angle += 0.00000000000000001 * sw.elapsed();
+//    		angle += 10 * sw.elapsed();
+    		angle= 0.01f;
 //    		System.out.println("maaaaaaaaaaatttttttttttttrrrrrrrrrrrriiiiiiiixxxxxx\n"+MatrixImp.rotate(vec, angle));
     		System.out.println("sdaföhekfhnwaknefökanovjwejnlfnaöjvbiew\n"+node.getWorldTransform());
+//    		angle = 0;
     		node.updateWorldTransform(MatrixImp.rotate(vec, angle));
     		System.out.println("simualtor"+node.getWorldTransform());
+    		System.out.println("angle vorher: " + angle);
 			angle = 0;
+			System.out.println(("angle nachher!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + angle));
 			getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
     	}
     	else if(type==SimulateType.TRANSLATE){
@@ -84,6 +90,7 @@ public class Simulator extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         if (message == Message.LOOP) {
+        	System.out.println("simulation loop");
             simulate();
         } else if (message == Message.INIT) {
             initialize();
@@ -173,12 +180,20 @@ public class Simulator extends UntypedActor {
         		simulations.put(newNode, new KeyDef(sc.getSimulation(), sc.getKeys(), sc.getMode(), sc.getVector()));
         		newNode.setLocalTransform(sc.modelmatrix);
         		newNode.updateWorldTransform(); //TODO: Node klasse fixen.... was geht denn hier
-        		System.out.println("simulations\n"+simulations.get(newNode).getVector()+"\n"+simulations.isEmpty()+sc.getSimulation());
+//        		System.out.println("simulations\n"+simulations.get(newNode).getVector()+"\n"+simulations.isEmpty()+sc.getSimulation());
         		
         	}else{
         		simulations.remove(newNode);
         	}
         }
+        else if (message instanceof PhysicModification) {
+//        	System.out.println("Physic data received!!!!!!!!!!!!!" + (((PhysicModification) message)).velocity);
+        	
+        	
+        }
+        
         
     }
+
+	
 }

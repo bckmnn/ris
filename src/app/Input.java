@@ -72,6 +72,7 @@ public class Input extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         if (message == Message.LOOP) {
+        	System.out.println("input loop");
             run();
         } else if (message == Message.INIT) {
             initialize();

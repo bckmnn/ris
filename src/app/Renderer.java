@@ -95,6 +95,7 @@ public class Renderer extends UntypedActor {
 		Shader.setProjectionMatrix(projectionMatrix);
 
 		camera.activate();
+		System.out.println("hier!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2222222: " + start.toString());
 		start.display();
 
 		Display.setTitle("App");
@@ -112,6 +113,7 @@ public class Renderer extends UntypedActor {
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message == Message.DISPLAY) {
+			System.out.println("hier!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + start.toString());
 			display();
 		} else if (message instanceof RendererInitialization) {
 			initialize();

@@ -167,8 +167,13 @@ public class WorldState extends UntypedActor{
 			}
 		} else if (event instanceof NodeModification || event instanceof StartNodeModification) {
 			for (ActorRef observer : observers.get(Events.NODE_MODIFICATION)) { 
-//				System.out.println("announce:"+getSender()+"message"+event.toString());
-				/*if(!observer.equals(getSender()))*/observer.tell(event, self()); //TODO: getSender überprüfen
+				System.out.println("announce:"+getSender()+"message"+event.toString());
+				if(!observer.equals(getSender())){
+					observer.tell(event, self()); 
+				}
+				else if(observer.equals(getSender()) && getSender().equals(renderer)){
+					observer.tell(event, self()); 
+				}
 			}
 		} 	
 	}
@@ -321,8 +326,8 @@ public class WorldState extends UntypedActor{
 		physic.tell(n, self());
 //		SimulateCreation sc=(SimulateCreation)n; TODO: wieso geht das nicht?
 //		sc.setSimulation(SimulateType.PHYSIC);
-		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.PHYSIC, null, null);
-		sc.modelmatrix = n.modelmatrix;
+		SimulateCreation sc = new SimulateCreation(cube.id, null, SimulateType.TRANSLATE, null, null);
+		sc.modelmatrix = n.getModelmatrix();
 		simulator.tell(sc,self());
 			
 	}
