@@ -721,7 +721,7 @@ public final class MatrixImp implements Matrix {
     for (int r = 0; r < 4; r++) {
       s += "[ ";
       for (int c = 0; c < 4; c++) {
-        s += get(c, r) + " ";
+        s += String.format("%+.4f", get(c, r)) + " ";
       }
       s += "]\n";
     }
