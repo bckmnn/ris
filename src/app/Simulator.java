@@ -2,6 +2,7 @@ package app;
 
 
 import static app.nodes.NodeFactory.nodeFactory;
+import static app.vecmathimp.FactoryDefault.vecmath;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,11 +68,11 @@ public class Simulator extends UntypedActor {
     	if(type==SimulateType.ROTATE){
     		//TODO: Rotate simulation
 //    		angle += 10 * sw.elapsed();
-    		angle= 0.01f;
+    		angle= 0.5f;
 //    		System.out.println("maaaaaaaaaaatttttttttttttrrrrrrrrrrrriiiiiiiixxxxxx\n"+MatrixImp.rotate(vec, angle));
     		System.out.println("sdaföhekfhnwaknefökanovjwejnlfnaöjvbiew\n"+node.getWorldTransform());
 //    		angle = 0;
-    		node.updateWorldTransform(MatrixImp.rotate(vec, angle));
+    		node.updateWorldTransform(vecmath.rotationMatrix(vec.x(), vec.y(),vec.z(), angle));
     		System.out.println("simualtor"+node.getWorldTransform());
     		System.out.println("angle vorher: " + angle);
 			angle = 0;
@@ -137,8 +138,8 @@ public class Simulator extends UntypedActor {
         		Node modify = nodes.get(((NodeModification) message).id);
         		System.out.println("haaaooooooooooooooooooooooooooooooooooooooooo\n"+modify.id+"\n"+"local\n"+modify.getLocalTransform()+"world\n"+modify.getWorldTransform());
         		if (((NodeModification) message).localMod != null) {
-        			modify.updateWorldTransform(((NodeModification) message).localMod);
-//        		modify.setLocalTransform(modify.getWorldTransform());
+        			 modify.setLocalTransform(((NodeModification) message).localMod);
+    				 modify.updateWorldTransform();
         			System.out.println("haaaooooooooooooooooooooooooooooooooooooooooo\n"+modify.id+"\n"+"local\n"+modify.getLocalTransform()+"world\n"+modify.getWorldTransform());
         		}
 //        		if (((NodeModification) message).appendTo != null) {
