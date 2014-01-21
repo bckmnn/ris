@@ -9,8 +9,6 @@ import app.edges.DefaultEdge;
 import app.edges.Edge;
 import app.vecmath.Matrix;
 import app.vecmath.Vector;
-import app.vecmathimp.FactoryDefault;
-import app.vecmathimp.VectorImp;
 
 public abstract class Node {
     private Matrix modelMatrix, worldTrafo;
