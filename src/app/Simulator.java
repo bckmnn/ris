@@ -63,25 +63,16 @@ public class Simulator extends UntypedActor {
     }
     
     private void doSimulation(Node node, SimulateType type, Vector vec){
-    	StopWatch sw=new StopWatch();
-    	System.out.println("in?");
+    	//StopWatch sw=new StopWatch();
     	if(type==SimulateType.ROTATE){
     		//TODO: Rotate simulation
-//    		angle += 10 * sw.elapsed();
     		angle= 0.5f;
-//    		System.out.println("maaaaaaaaaaatttttttttttttrrrrrrrrrrrriiiiiiiixxxxxx\n"+MatrixImp.rotate(vec, angle));
-    		System.out.println("sdaföhekfhnwaknefökanovjwejnlfnaöjvbiew\n"+node.getWorldTransform());
-//    		angle = 0;
     		node.updateWorldTransform(vecmath.rotationMatrix(vec.x(), vec.y(),vec.z(), angle));
-    		System.out.println("simualtor"+node.getWorldTransform());
-    		System.out.println("angle vorher: " + angle);
 			angle = 0;
-			System.out.println(("angle nachher!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + angle));
 			getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
     	}
     	else if(type==SimulateType.TRANSLATE){
     		node.updateWorldTransform(MatrixImp.translate(vec));
-    		System.out.println("roiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiggggggggggggghhhhhhhhhht"+node.getWorldTransform());
     		getSender().tell(new NodeModification(node.id,node.getWorldTransform()), self());
     	}
     	
