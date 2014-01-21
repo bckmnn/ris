@@ -13,7 +13,6 @@ import app.eventsystem.PhysicModification;
 import app.eventsystem.Types;
 import app.messages.Message;
 import app.messages.PhysicInitialization;
-import app.messages.RendererInitialization;
 import app.nodes.Node;
 import app.toolkit.StopWatch;
 import app.vecmathimp.VectorImp;

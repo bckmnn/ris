@@ -22,7 +22,6 @@ import app.messages.Message;
 import app.messages.Mode;
 import app.messages.SimulateType;
 import app.nodes.Node;
-import app.toolkit.StopWatch;
 import app.vecmath.Vector;
 import app.vecmathimp.MatrixImp;
 
